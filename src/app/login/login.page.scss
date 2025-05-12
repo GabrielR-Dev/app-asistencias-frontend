@@ -1,0 +1,89 @@
+.login-content{
+  --background: white;
+  
+}
+.login-container{
+  top: 200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+}
+
+.login-container {
+  background: #d9d9d9;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.3);
+  position: relative;
+  text-align: center;
+}
+//Icono posicion arriba de formulario
+.avatar {
+  position: absolute;
+  height: 90px;
+  width: 90px;
+  transform: translateX(-50%);
+  background: black;
+  border-radius: 50px;  
+  top: -45px;
+  left: 50%;
+}
+ .avatar img{
+   width: 90px;
+   height: 90px;
+ }
+ //-------------
+ //formulario input contraseña y boton, contenido
+.formulario {
+  margin-top: 60px;
+  
+}
+ion-item {
+  margin-bottom: 15px;
+  background: white;
+}
+//boton ingresar formulario
+.login-button {
+  --background: #06B9A7;
+  color: black;
+  
+}
+.texto_olvidar_contra{
+  display: flex;
+  justify-content: end;
+}
+.texto_olvidar_contra p{
+  margin: 0;
+  color: black;
+  font-size: 12px;
+}
+//orden input de icono, contenido, etc
+.orden_input{
+  position: relative;
+}
+.orden_input img{
+  width: 15px;
+  height: 15px;
+  margin-right: 10px;
+}
+
+.ojo{
+  position: absolute;
+  right: 0;
+  padding: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; 
+  background: transparent;
+ }
+ .orden_input .ojo_ocultar{
+   width: 20px;
+   height: 20px;
+   pointer-events: none;
+}

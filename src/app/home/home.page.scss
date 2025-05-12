@@ -1,3 +1,8 @@
+*{
+  padding: 0;
+  margin: 0;
+}
+
 #container {
   text-align: center;
 
@@ -24,4 +29,24 @@
 
 #container a {
   text-decoration: none;
+}
+//barra de arriba
+.barra_navegadora{
+  display: flex;
+  justify-content: space-between;
+  margin: 0 10px;
+}
+.button a{
+  text-decoration: none;
+  background-color: gray;
+  color: white;
+  font-size: 25px;
+  padding: 5px;
+  border-radius: 5px;
+  transition-duration: 0.1s;
+  
+  
+}
+.button:active{
+  background-color: #2e7d32;
 }

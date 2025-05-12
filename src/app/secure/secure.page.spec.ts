@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { SecurePage } from './secure.page';
 
-import { HomePage } from './home.page';
-
-describe('HomePage', () => {
-  let component: HomePage;
-  let fixture: ComponentFixture<HomePage>;
+describe('SecurePage', () => {
+  let component: SecurePage;
+  let fixture: ComponentFixture<SecurePage>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomePage);
+    fixture = TestBed.createComponent(SecurePage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
