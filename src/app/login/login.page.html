@@ -1,0 +1,32 @@
+<ion-content class=" ion-padding  login-content">
+  <div class="login-container">
+    <div class="avatar">
+      <img src="../../assets/icon/avatar.png" alt="Icono_Persona">
+    </div>
+
+    <form (submit)="login()" class="formulario">
+
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_usuario.png" alt="usuario_icon">
+        <ion-input placeholder="Usuario" [(ngModel)]="email" type="email" name="email" required></ion-input>
+      </ion-item>
+
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_candado.png" alt="icono_candado">
+        <ion-input [type]="mostrarPassword ? 'text' : 'password'"  placeholder="Password" [(ngModel)]="password" type="password" name="password" required></ion-input>
+        <button type="button" class="ojo" (click)="ocultarContra()">
+          <img class="ojo_ocultar" src="../../assets/icon/icono_ocultar.png" alt="ojo_ocultar">
+        </button>
+      </ion-item>
+
+      <a class="texto_olvidar_contra" href="#">
+        <p>¿Olvidaste la contraseña?</p>
+      </a>
+      <ion-button expand="full" type="submit" class="ion-margin-top login-button">Iniciar sesion</ion-button>
+
+      <ion-text color="danger" *ngIf="errorMessage">
+        <p class="ion-padding">{{ errorMessage }}</p>
+      </ion-text>
+    </form>
+  </div>
+</ion-content>
