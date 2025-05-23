@@ -4,12 +4,19 @@
 
 export const environment = {
   firebaseConfig: {
-    apiKey: "AIzaSyC8WrW8V9Hc_Nl6PCZ6MqsIc1ysKqpM19w",
+    /*apiKey: "AIzaSyC8WrW8V9Hc_Nl6PCZ6MqsIc1ysKqpM19w",
     authDomain: "probando-login-94073.firebaseapp.com",
     projectId: "probando-login-94073",
     storageBucket: "probando-login-94073.firebasestorage.com",
     messagingSenderId: "218037438353",
-    appId: "1:218037438353:web:5ca9d9ffa11a0ab49f7c30",
+    appId: "1:218037438353:web:5ca9d9ffa11a0ab49f7c30",*/
+    apiKey: "AIzaSyCT6ckeY8IfHcYMST-3iuFBdeWmUzsHgvQ",
+    authDomain: "app-asistencias-4e726.firebaseapp.com",
+    projectId: "app-asistencias-4e726",
+    storageBucket: "app-asistencias-4e726.firebasestorage.app",
+    messagingSenderId: "261634261602",
+    appId: "1:261634261602:web:9924d24121d24c0793873b",
+    
     measurementId: "G-W9ZZCFPZC4"
   }
 };

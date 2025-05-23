@@ -1,0 +1,57 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="volverAtras()">
+        <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Detalle de Materia</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-card *ngIf="materia">
+    <ion-card-header>
+      <ion-card-title>{{ materia.nombre }}</ion-card-title>
+      <ion-card-subtitle>{{ materia.descripcion }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Profesor:</strong> {{ materia.profesorNombre }} {{ materia.profesorApellido }}</p>
+      <p><strong>Fecha de creación:</strong> {{ materia.fechaCreacion | date:'mediumDate' }}</p>
+      <p><strong>Código de invitación:</strong> {{ materia.invitacion }}</p>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Clases Futuras</ion-card-title>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let clase of clasesFuturas">
+        <ion-label>{{ clase.nombre }} - {{ clase.fecha }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Clases en Curso</ion-card-title>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let clase of clasesEnCurso">
+        <ion-label>{{ clase.nombre }} - {{ clase.fecha }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Clases Pasadas</ion-card-title>
+    </ion-card-header>
+    <ion-list>
+      <ion-item *ngFor="let clase of clasesPasadas">
+        <ion-label>{{ clase.nombre }} - {{ clase.fecha }}</ion-label>
+      </ion-item>
+    </ion-list>
+  </ion-card>
+</ion-content>

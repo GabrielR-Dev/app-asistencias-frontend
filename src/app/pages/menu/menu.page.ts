@@ -1,12 +1,24 @@
 import { Component, OnInit } from '@angular/core';
-
 import { Router } from '@angular/router';
 import { CargarMasDatosService } from 'src/app/services/cargar-mas-datos.service';
-
 import { ListaM } from 'src/app/models/lista.model';
-import { UsuarioM } from 'src/app/models/usuario.model';
-import { ConnectableObservable } from 'rxjs';
+import { Materia } from 'src/app/models/materia.model';
 
+// Simulación de usuario logueado
+const usuario1 = {
+  id: Date.now(),
+  nombre: 'Valentín',
+  apellido: 'Ojeda',
+  mail: 'vale@gmail.com',
+  dni: '12345678'
+};
+const usuario2 = {
+  id: Date.now(),
+  nombre: 'Gabriel',
+  apellido: 'Rolon',
+  mail: 'gabi@gmail.com',
+  dni: '12345678'
+};
 
 @Component({
   standalone: false,
@@ -14,13 +26,26 @@ import { ConnectableObservable } from 'rxjs';
   templateUrl: './menu.page.html',
   styleUrls: ['./menu.page.scss'],
 })
-
 export class MenuPage implements OnInit {
   listaAsist: ListaM[] = [];
   listaAsistCarga: ListaM[] = [];
   listaAsistDisponibles: ListaM[] = [];
   codigoInvitacion: string = '';
 
+  modalAbierto: boolean = false;
+  materiaForm: any = {
+    nombre: '',
+    descripcion: '',
+    creadorId: '',
+    profesorId: '',
+    profesorNombre: '',
+    profesorApellido: ''
+  };
+  materias: Materia[] = [];
+
+  // Buscar materia por código de invitación
+  materiaBuscada: Materia | null = null;
+  yaSuscripto: boolean = false;
 
   constructor(
     private router: Router,
@@ -29,9 +54,21 @@ export class MenuPage implements OnInit {
 
   ngOnInit() {
     //this.listaAsist = JSON.parse(localStorage.getItem('listas') || '[]')
-    this.cargaIniciadoraAsist()   //llama a una función para crear listas
+    //this.cargaIniciadoraAsist()   //llama a una función para crear listas
     this.listaAsistCarga.push(...this.cargarMasDatos.cargarInicial(this.listaAsist))    //carga 10 listas de todas las que tengo
 
+    // Cargar materias desde localStorage y mapear a instancias de Materia
+    const materiasRaw = JSON.parse(localStorage.getItem('materias') || '[]');
+    this.materias = materiasRaw.map((m: any) => new Materia(
+      m.nombre,
+      m.creadorId,
+      m.descripcion,
+      m.profesorNombre,
+      m.profesorApellido,
+      m.puntuacion,
+      m.fechaCreacion,
+      m.invitacion
+    ));
   }
 
   //crea un par de listas de ejemplo
@@ -39,8 +76,9 @@ export class MenuPage implements OnInit {
     for (let i = 0; i < 15; i++) {
       this.listaAsist.push(new ListaM(`Lista de Asistencias número ${i}`, i));
     }
-    localStorage.setItem('listas', JSON.stringify(this.listaAsist))
     //esto es para agregar más listas, pero solo al local storage que guarda todas las listas de la app (listasApp) y a la variable que las representa (listasDisponibles)
+    localStorage.setItem('listas', JSON.stringify(this.listaAsist))
+    
     const todasLasListas: ListaM[] = [];
     todasLasListas.push(...this.listaAsist)
     for (let i = this.listaAsist.length + 1; i <= this.listaAsist.length + 10; i++) {
@@ -48,8 +86,6 @@ export class MenuPage implements OnInit {
     }
     localStorage.setItem('listasApp', JSON.stringify(todasLasListas))
     this.listaAsistDisponibles.push(...todasLasListas)
-    console.log(this.listaAsistDisponibles[17].invitacion)
-    console.log(this.listaAsistDisponibles);
   }
 
   //carga mas de las listas que tengo (carga de a 10)
@@ -74,33 +110,104 @@ export class MenuPage implements OnInit {
     localStorage.setItem('listas', JSON.stringify(listaActualizada))
   }
 
+  // Busca la materia por código de invitación en todas las materias guardadas
   agregarListaPorCodigo() {
-    const listaEncontrada = this.listaAsistDisponibles.find(
-      item => String(item.invitacion) === this.codigoInvitacion
-    );
-    console.log("El código que usted buscó fue", this.codigoInvitacion)
-    console.log("El código que usted encontró fue", listaEncontrada?.invitacion)
-    console.log(listaEncontrada)
-
-    if (listaEncontrada) {
-      // Verifica que no esté agregada
-      const yaExiste = this.listaAsist.some(item => item.invitacion === listaEncontrada.invitacion);
-
-      if (!yaExiste) {
-        const longCarga = this.listaAsistCarga.length;
-        this.listaAsistCarga.push(listaEncontrada);
-        const restoTotal = this.listaAsist.slice(longCarga, this.listaAsist.length)
-        this.listaAsist = [...this.listaAsistCarga];
-        this.listaAsist.push(...restoTotal)
-        localStorage.setItem('listas', JSON.stringify(this.listaAsist));
-        console.log('Lista agregada');
-      } else {
-        console.log('Ya existe esa lista en tus guardadas');
-      }
+    const materiasRaw = JSON.parse(localStorage.getItem('materias') || '[]');
+    const materiaEncontrada = materiasRaw.find((m: any) => m.invitacion == this.codigoInvitacion);
+    if (materiaEncontrada) {
+      this.materiaBuscada = new Materia(
+        materiaEncontrada.nombre,
+        materiaEncontrada.creadorId,
+        materiaEncontrada.descripcion,
+        materiaEncontrada.profesorNombre,
+        materiaEncontrada.profesorApellido,
+        materiaEncontrada.puntuacion,
+        materiaEncontrada.fechaCreacion,
+        materiaEncontrada.invitacion
+      );
     } else {
-      console.log('Código no válido');
+      this.materiaBuscada = null;
+      this.yaSuscripto = false;
     }
-
-    this.codigoInvitacion = ''; // limpia el input
   }
+
+  // Suscribirse a la materia encontrada
+  suscribirseAMateria() {
+    if (this.materiaBuscada && !this.yaSuscripto) {
+      this.materias.push(this.materiaBuscada);
+      localStorage.setItem('materias', JSON.stringify(this.materias));
+      this.yaSuscripto = true;
+    }
+  }
+
+  // Lógica para crear una clase nueva (puedes personalizar los datos)
+  crearClaseNueva() {
+    const nuevaClase = new ListaM('Clase nueva ' + (this.listaAsist.length + 1), Date.now());
+    this.listaAsist.push(nuevaClase);
+    this.listaAsistCarga.push(nuevaClase);
+    localStorage.setItem('listas', JSON.stringify(this.listaAsist));
+  }
+
+  // Modal de materias para crear
+  abrirModal() {
+    this.modalAbierto = true;
+
+    this.materiaForm = {
+      nombre: '',
+      descripcion: '',
+      creadorId: usuario2.id,
+      profesorId: usuario2.id,
+      profesorNombre: usuario2.nombre,
+      profesorApellido: usuario2.apellido
+    };
+  }
+
+  cerrarModal() {
+    this.modalAbierto = false;
+  }
+
+  // Guarda una nueva materia creada por el usuario logueado
+  guardarMateria() {
+    if (!this.materiaForm.nombre || !this.materiaForm.descripcion) {
+      return;
+    }
+    const nuevaMateria = new Materia(
+      this.materiaForm.nombre,
+      this.materiaForm.creadorId,
+      this.materiaForm.descripcion,
+      this.materiaForm.profesorNombre,
+      this.materiaForm.profesorApellido
+    );
+    this.materias.push(nuevaMateria);
+    localStorage.setItem('materias', JSON.stringify(this.materias));
+    this.cerrarModal();
+
+    // Limpiar el formulario
+    this.materiaForm = {
+      nombre: '',
+      descripcion: '',
+      creadorId: usuario1.id,
+      profesorId: usuario1.id,
+      profesorNombre: usuario1.nombre,
+      profesorApellido: usuario1.apellido
+    };
+  }
+
+  detalleMateria(materia: Materia) {
+    // Guarda la materia seleccionada en localStorage y navega a la página de detalle
+    localStorage.setItem('materiaDetalle', JSON.stringify(materia));
+    this.router.navigate(['menu/materia-detalle']);
+  }
+
+  eliminarMateria(materia: Materia) {
+    // Elimina la materia de la lista y del localStorage
+    this.materias = this.materias.filter(m => m.invitacion !== materia.invitacion);
+    localStorage.setItem('materias', JSON.stringify(this.materias));
+    // Si la materia eliminada estaba siendo mostrada en el buscador, la oculta
+    if (this.materiaBuscada && this.materiaBuscada.invitacion === materia.invitacion) {
+      this.materiaBuscada = null;
+      this.yaSuscripto = false;
+    }
+  }
+
 }
