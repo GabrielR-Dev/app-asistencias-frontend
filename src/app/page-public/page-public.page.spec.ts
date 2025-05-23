@@ -1,14 +1,12 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { PagePublicPage } from './page-public.page';
 
-import { HomePage } from './home.page';
-
-describe('HomePage', () => {
-  let component: HomePage;
-  let fixture: ComponentFixture<HomePage>;
+describe('PagePublicPage', () => {
+  let component: PagePublicPage;
+  let fixture: ComponentFixture<PagePublicPage>;
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(HomePage);
+    fixture = TestBed.createComponent(PagePublicPage);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

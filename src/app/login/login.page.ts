@@ -15,26 +15,30 @@ export class LoginPage {
   password: string = '';
   errorMessage: string = '';
   mostrarPassword: boolean = false;
+  
 
   constructor(private authService: AuthService, private router: Router) {}
-
-  login() {
-    this.authService.login(this.email, this.password)
-      .then(() => {
-        this.router.navigate(['/secure']);
-        // acá podés redirigir a otra página si querés
-      })
-      .catch(err => {
-        console.error(err);
-        this.errorMessage = 'Usuario o contraseña incorrectos';
-      });
+  
+  async login() {
+    try {
+      const user = await this.authService.login(this.email, this.password);
+      console.log('Login exitoso:', user);
+      this.router.navigateByUrl('/page-secure', { replaceUrl: true }); // Cambia a la página que quieras
+    } catch (error: any) {
+      this.errorMessage = 'Error de conexion';
+    }
   }
+
+
   //Ocultar contraseña
   ocultarContra() {
     this.mostrarPassword = !this.mostrarPassword;
   }
-  volverTabs(){
-    this.router.navigate(['/home']);
+  
+  
+  ngOnInit() {
   }
-
+  irMenu(){
+    this.router.navigate(['/page-public']);
+  }
 }
