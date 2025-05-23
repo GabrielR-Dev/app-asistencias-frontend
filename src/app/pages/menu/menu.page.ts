@@ -13,14 +13,20 @@ import { ConnectableObservable } from 'rxjs';
   templateUrl: './menu.page.html',
   styleUrls: ['./menu.page.scss'],
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 })
 export class MenuPage implements OnInit {
   listaAsist: ListaM[] = [];
 =======
+=======
+>>>>>>> Stashed changes
   standalone: false
 })
 export class MenuPage implements OnInit {
 listaAsist: ListaM[] = [];
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   listaAsistCarga: ListaM[] = [];
   listaAsistDisponibles: ListaM[] = [];
