@@ -12,9 +12,16 @@ import { ConnectableObservable } from 'rxjs';
   selector: 'app-menu',
   templateUrl: './menu.page.html',
   styleUrls: ['./menu.page.scss'],
+<<<<<<< Updated upstream
 })
 export class MenuPage implements OnInit {
   listaAsist: ListaM[] = [];
+=======
+  standalone: false
+})
+export class MenuPage implements OnInit {
+listaAsist: ListaM[] = [];
+>>>>>>> Stashed changes
   listaAsistCarga: ListaM[] = [];
   listaAsistDisponibles: ListaM[] = [];
   codigoInvitacion: string = '';

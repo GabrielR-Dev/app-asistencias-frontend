@@ -3,7 +3,11 @@ import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
 const routes: Routes = [
   {
     path: 'login',
+<<<<<<< Updated upstream
     loadChildren: () => import('./login/login.module').then((m) => m.LoginPageModule),
+=======
+    loadChildren: () => import('./pages/login/login.module').then((m) => m.LoginPageModule),
+>>>>>>> Stashed changes
   },
   {
     path: 'secure',
@@ -11,7 +15,11 @@ const routes: Routes = [
   },
   {
     path: 'home',
+<<<<<<< Updated upstream
     loadChildren: () => import('./home/home.module').then((m) => m.HomePageModule),
+=======
+    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomePageModule),
+>>>>>>> Stashed changes
   },
   {
     path: '',
