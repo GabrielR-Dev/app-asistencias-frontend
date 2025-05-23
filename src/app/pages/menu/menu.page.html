@@ -1,0 +1,43 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      Blank
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-input [(ngModel)]="codigoInvitacion" placeholder="Ingrese código"></ion-input>
+      <ion-button (click)="agregarListaPorCodigo()">Agregar lista</ion-button>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content [fullscreen]="true">
+
+    <ion-card class="contenedor-card">
+      <ion-card-header>
+        <ion-card-title>Tus listas de asistencia</ion-card-title>
+      </ion-card-header>
+
+      <ion-card-content class="contenedor-scroll">
+        <p *ngIf="listaAsistCarga.length === 0">No hay listas para mostrar.</p>
+
+        <ion-list>
+          <ion-item *ngFor="let lista of listaAsistCarga">
+            <ion-label>{{ lista.nombre }}</ion-label>
+            <ion-label>{{ lista.invitacion }}</ion-label>
+            <ion-chip shape="round" (click)="detalle(lista.nombre, listaAsist)">Entrar a lista<ion-icon
+                name="enter-outline"></ion-icon></ion-chip>
+            <ion-chip shape="round" (click)="eliminar(lista.nombre, listaAsist)">Eliminar lista<ion-icon
+                name="close-circle-outline"></ion-icon></ion-chip>
+          </ion-item>
+          <ion-button *ngIf="listaAsist.length > listaAsistCarga.length" horizontal="end"
+            (click)="cargarMasListas()">Cargar más</ion-button>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+  </ion-content>
