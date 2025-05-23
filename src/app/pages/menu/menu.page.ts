@@ -9,25 +9,14 @@ import { ConnectableObservable } from 'rxjs';
 
 
 @Component({
+  standalone: false,
   selector: 'app-menu',
   templateUrl: './menu.page.html',
   styleUrls: ['./menu.page.scss'],
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
 })
+
 export class MenuPage implements OnInit {
   listaAsist: ListaM[] = [];
-=======
-=======
->>>>>>> Stashed changes
-  standalone: false
-})
-export class MenuPage implements OnInit {
-listaAsist: ListaM[] = [];
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   listaAsistCarga: ListaM[] = [];
   listaAsistDisponibles: ListaM[] = [];
   codigoInvitacion: string = '';
@@ -91,7 +80,7 @@ listaAsist: ListaM[] = [];
     );
     console.log("El código que usted buscó fue", this.codigoInvitacion)
     console.log("El código que usted encontró fue", listaEncontrada?.invitacion)
-    console.log (listaEncontrada)
+    console.log(listaEncontrada)
 
     if (listaEncontrada) {
       // Verifica que no esté agregada
