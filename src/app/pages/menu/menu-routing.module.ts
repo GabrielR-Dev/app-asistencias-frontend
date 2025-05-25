@@ -7,6 +7,10 @@ const routes: Routes = [
   {
     path: '',
     component: MenuPage
+  },
+  {
+    path: 'materia-detalle',
+    loadChildren: () => import('../materia-detalle/materia-detalle.module').then(m => m.MateriaDetallePageModule)
   }
 ];
 

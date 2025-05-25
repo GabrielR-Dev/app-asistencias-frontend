@@ -28,3 +28,10 @@
   display: flex;
   gap: 4px;
 }
+
+ion-fab[vertical="bottom"][horizontal="end"] {
+  position: fixed !important;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+}

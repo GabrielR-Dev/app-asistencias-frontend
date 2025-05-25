@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 
 @Component({
-  standalone: false,
   selector: 'app-Home',
   templateUrl: './home.page.html',
   styleUrls: ['./home.page.scss'],
+  standalone: false,
 })
 export class HomePage {
 

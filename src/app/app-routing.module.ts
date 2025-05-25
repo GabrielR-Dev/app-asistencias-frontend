@@ -11,7 +11,7 @@ const routes: Routes = [
   },
   {
     path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomePageModule),
+    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomePageModule)
   },
   {
     path: '',
@@ -19,9 +19,10 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
-    path: 'menu',
-    loadChildren: () => import('./pages/menu/menu.module').then( m => m.MenuPageModule)
+    path: 'menu/materia-detalle',
+    loadChildren: () => import('./pages/materia-detalle/materia-detalle.module').then( m => m.MateriaDetallePageModule)
   },
+
 
 ];
 @NgModule({
