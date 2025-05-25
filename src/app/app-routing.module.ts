@@ -1,30 +1,33 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import { AuthGuard } from './guards/auth.guard';
+
 const routes: Routes = [
   {
     path: 'login',
-    loadChildren: () => import('./pages/login/login.module').then((m) => m.LoginPageModule),
+    loadChildren: () => import('./pages/auth/login/login.module').then((m) => m.LoginPageModule),
   },
   {
-    path: 'secure',
-    loadChildren: () => import('./secure/secure.module').then((m) => m.SecurePageModule),
-  },
-  {
-    path: 'home',
-    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomePageModule)
+    path: 'register',
+    loadChildren: () => import('./pages/auth/register/register.module').then( m => m.RegisterPageModule)
   },
   {
     path: '',
-    redirectTo: '/login',
+    redirectTo: '/home',
     pathMatch: 'full',
   },
   {
-    path: 'menu/materia-detalle',
-    loadChildren: () => import('./pages/materia-detalle/materia-detalle.module').then( m => m.MateriaDetallePageModule)
+    path: 'home',
+    loadChildren: () => import('./pages/home/home.module').then((m) => m.HomePageModule),
+    canActivate: [AuthGuard]
   },
-
-
+  {
+    path: 'menu/materia-detalle',
+    loadChildren: () => import('./pages/home/evento-detalle/evento-detalle.module').then( m => m.EventoDetallePageModule),
+    canActivate: [AuthGuard]
+  },
 ];
+
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, { preloadingStrategy: PreloadAllModules }),

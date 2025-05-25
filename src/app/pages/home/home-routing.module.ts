@@ -9,10 +9,9 @@ const routes: Routes = [
     children: [
       {
         path: 'menu',
-        loadChildren: () => import('../menu/menu.module').then(m => m.MenuPageModule)
-      },
-      //Estas tienen que ser las rutas para el perfil y configuraciones
-      /*{
+        loadChildren: () => import('./menu/menu.module').then(m => m.MenuPageModule)
+      },/*
+      {
         path: 'perfil',
         loadChildren: () => import('../perfil/perfil.module').then(m => m.PerfilPageModule)
       },

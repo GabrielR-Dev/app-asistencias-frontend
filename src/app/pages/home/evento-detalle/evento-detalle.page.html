@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Detalle del Evento</ion-title>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home/menu"></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-card *ngIf="evento">
+    <ion-card-header>
+      <ion-card-title>{{ evento.nombre }}</ion-card-title>
+      <ion-card-subtitle>{{ evento.descripcion }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <p><strong>Organizador:</strong> {{ evento.organizadorNombre }} {{ evento.organizadorApellido }}</p>
+      <p><strong>Código de invitación:</strong> {{ evento.invitacion }}</p>
+      <p><strong>Fecha de creación:</strong> {{ evento.fechaCreacion | date:'medium' }}</p>
+      <!-- Aquí puedes agregar más detalles del evento -->
+    </ion-card-content>
+  </ion-card>
+  <ion-list>
+    <ion-list-header>Clases asociadas</ion-list-header>
+    <ion-item *ngFor="let clase of clasesFuturas">{{ clase.nombre }} (Futura)</ion-item>
+    <ion-item *ngFor="let clase of clasesEnCurso">{{ clase.nombre }} (En curso)</ion-item>
+    <ion-item *ngFor="let clase of clasesPasadas">{{ clase.nombre }} (Pasada)</ion-item>
+  </ion-list>
+</ion-content>

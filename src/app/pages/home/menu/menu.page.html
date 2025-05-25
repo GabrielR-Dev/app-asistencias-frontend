@@ -1,0 +1,105 @@
+<ion-content [fullscreen]="true">
+
+  <ion-header [translucent]="true">
+    <ion-toolbar>
+      <ion-input [(ngModel)]="codigoInvitacion" placeholder="Ingrese código de invitación"></ion-input>
+      <ion-button (click)="agregarListaPorCodigo()">Buscar evento</ion-button>
+    </ion-toolbar>
+  </ion-header>
+
+  <!-- Resultado de búsqueda de evento por código -->
+  <ion-card *ngIf="eventoBuscado">
+    <ion-card-header>
+      <ion-card-title>{{ eventoBuscado.nombre }}</ion-card-title>
+      <ion-card-subtitle>{{ eventoBuscado.descripcion }}</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+        <div>
+          <p><strong>Organizador:</strong> {{ eventoBuscado.organizadorNombre }} {{ eventoBuscado.organizadorApellido }}</p>
+          <p><strong>Código de invitación:</strong> {{ eventoBuscado.invitacion }}</p>
+        </div>
+        <ion-button color="success" *ngIf="!yaSuscripto" (click)="suscribirseAEvento()">Suscribirse</ion-button>
+        <ion-badge color="primary" *ngIf="yaSuscripto">Ya suscripto</ion-badge>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="contenedor-card">
+    <ion-card-header>
+      <ion-card-title>Eventos Suscriptos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content class="contenedor-scroll">
+      <p *ngIf="listaAsistCarga.length === 0">No hay listas para mostrar.</p>
+      <ion-list>
+        <ion-item *ngFor="let lista of listaAsistCarga">
+          <ion-label>{{ lista.nombre }}</ion-label>
+          <ion-label>{{ lista.invitacion }}</ion-label>
+          <ion-chip shape="round" (click)="detalle(lista.nombre, listaAsist)">Ver<ion-icon name="enter-outline"></ion-icon></ion-chip>
+          <ion-chip shape="round" (click)="eliminar(lista.nombre, listaAsist)">Eliminar Evento<ion-icon name="close-circle-outline"></ion-icon></ion-chip>
+        </ion-item>
+        <ion-button *ngIf="listaAsist.length > listaAsistCarga.length" horizontal="end" (click)="cargarMasListas()">Cargar más</ion-button>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card class="contenedor-card">
+    <ion-card-header>
+      <ion-card-title>Eventos Creados</ion-card-title>
+    </ion-card-header>
+    <ion-card-content class="contenedor-scroll">
+      <p *ngIf="eventos.length === 0">No hay eventos creados.</p>
+      <ion-list>
+        <ion-item *ngFor="let evento of eventos">
+          <ion-label class="ion-text-wrap">
+            <h2>{{ evento.nombre }}</h2>
+            <p>{{ evento.descripcion }}</p>
+            <p *ngIf="evento.invitacion"><strong>Código:</strong> {{ evento.invitacion }}</p>
+            <p *ngIf="evento.organizadorNombre"><strong>Organizador:</strong> {{ evento.organizadorNombre }} {{ evento.organizadorApellido }}</p>
+          </ion-label>
+          <ion-chip shape="round" (click)="detalleEvento(evento)">Ver<ion-icon name="enter-outline"></ion-icon></ion-chip>
+          <ion-chip color="danger" shape="round" (click)="eliminarEvento(evento)">Eliminar<ion-icon name="trash-outline"></ion-icon></ion-chip>
+        </ion-item>
+      </ion-list>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Boton abrir el modal para crear un Evento -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="abrirModal()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+
+  <!-- Con modal abierto se muestra esto -->
+  <ion-modal [isOpen]="modalAbierto" (didDismiss)="cerrarModal()">
+    <ng-template>
+      <ion-header>
+        <ion-toolbar>
+          <ion-title>Agregar nuevo evento</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarModal()">
+              <ion-icon slot="icon-only" name="close"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+      <ion-content class="ion-padding">
+        <ion-item>
+          <ion-label position="floating">Nombre del evento</ion-label>
+          <ion-input [(ngModel)]="eventoForm.nombre"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="floating">Descripción</ion-label>
+          <ion-input [(ngModel)]="eventoForm.descripcion"></ion-input>
+        </ion-item>
+        <!-- Campos ocultos para guardar el usuario -->
+        <ion-input type="hidden" [(ngModel)]="eventoForm.creadorId"></ion-input>
+        <ion-input type="hidden" [(ngModel)]="eventoForm.organizadorId"></ion-input>
+        <ion-input type="hidden" [(ngModel)]="eventoForm.organizadorNombre"></ion-input>
+        <ion-input type="hidden" [(ngModel)]="eventoForm.organizadorApellido"></ion-input>
+        <ion-button expand="block" (click)="guardaEvento()">Guardar</ion-button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
