@@ -8,6 +8,7 @@ export class Evento {
   organizadorApellido?: string;
   fechaCreacion?: string;
   invitacion?: number;
+  creadorNombre?: string; // Nuevo campo para el nombre del creador
 
   constructor(
     nombre: string,
@@ -17,7 +18,8 @@ export class Evento {
     organizadorApellido: string = '',
     puntuacion?: number,
     fechaCreacion?: string,
-    invitacion?: number
+    invitacion?: number,
+    creadorNombre?: string // Nuevo parámetro opcional
   ) {
     this.id = Date.now();
     this.nombre = nombre;
@@ -28,5 +30,6 @@ export class Evento {
     this.puntuacion = puntuacion;
     this.fechaCreacion = fechaCreacion || new Date().toISOString();
     this.invitacion = invitacion || (this.id + Math.floor(Math.random() * 1000));
+    this.creadorNombre = creadorNombre || organizadorNombre;
   }
 }

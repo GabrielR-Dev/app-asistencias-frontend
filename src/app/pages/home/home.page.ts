@@ -14,6 +14,7 @@ export class HomePage {
   async logout() {
     await this.authService.logout();
     localStorage.removeItem('user');
+    localStorage.removeItem('usuarioLogueado');
     this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 }

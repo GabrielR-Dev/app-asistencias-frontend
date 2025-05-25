@@ -26,6 +26,11 @@ const routes: Routes = [
     loadChildren: () => import('./pages/home/evento-detalle/evento-detalle.module').then( m => m.EventoDetallePageModule),
     canActivate: [AuthGuard]
   },
+  {
+    path: 'menu/evento-suscripto',
+    loadChildren: () => import('./pages/home/evento-suscripto/evento-suscripto.module').then( m => m.EventoSuscriptoPageModule)
+  },
+
 ];
 
 @NgModule({

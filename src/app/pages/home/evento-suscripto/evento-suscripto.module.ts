@@ -4,17 +4,17 @@ import { FormsModule } from '@angular/forms';
 
 import { IonicModule } from '@ionic/angular';
 
-import { SecurePageRoutingModule } from './secure-routing.module';
+import { EventoSuscriptoPageRoutingModule } from './evento-suscripto-routing.module';
 
-import { SecurePage } from './secure.page';
+import { EventoSuscriptoPage } from './evento-suscripto.page';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
-    SecurePageRoutingModule
+    EventoSuscriptoPageRoutingModule
   ],
-  declarations: [SecurePage]
+  declarations: [EventoSuscriptoPage]
 })
-export class SecurePageModule {}
+export class EventoSuscriptoPageModule {}

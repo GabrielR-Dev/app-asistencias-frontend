@@ -27,14 +27,18 @@
 
   <ion-card class="contenedor-card">
     <ion-card-header>
-      <ion-card-title>Eventos Suscriptos</ion-card-title>
+      <ion-card-title>Suscripciones</ion-card-title>
     </ion-card-header>
     <ion-card-content class="contenedor-scroll">
       <p *ngIf="listaAsistCarga.length === 0">No hay listas para mostrar.</p>
       <ion-list>
         <ion-item *ngFor="let lista of listaAsistCarga">
-          <ion-label>{{ lista.nombre }}</ion-label>
-          <ion-label>{{ lista.invitacion }}</ion-label>
+          <ion-label class="ion-text-wrap">
+            <h2>{{ lista.nombre }}</h2>
+            <p>{{ lista.descripcion }}</p>
+            <p *ngIf="lista.creadorNombre"><strong>Creador:</strong> {{ lista.creadorNombre }}</p>
+            <p *ngIf="lista.invitacion"><strong>Código:</strong> {{ lista.invitacion }}</p>
+          </ion-label>
           <ion-chip shape="round" (click)="detalle(lista.nombre, listaAsist)">Ver<ion-icon name="enter-outline"></ion-icon></ion-chip>
           <ion-chip shape="round" (click)="eliminar(lista.nombre, listaAsist)">Eliminar Evento<ion-icon name="close-circle-outline"></ion-icon></ion-chip>
         </ion-item>
@@ -45,7 +49,7 @@
 
   <ion-card class="contenedor-card">
     <ion-card-header>
-      <ion-card-title>Eventos Creados</ion-card-title>
+      <ion-card-title>Mis Eventos</ion-card-title>
     </ion-card-header>
     <ion-card-content class="contenedor-scroll">
       <p *ngIf="eventos.length === 0">No hay eventos creados.</p>

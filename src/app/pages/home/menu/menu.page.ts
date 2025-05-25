@@ -69,6 +69,18 @@ export class MenuPage implements OnInit {
       }
       return;
     }
+
+    // Al cargar eventos suscriptos desde storage, restaurar la descripción si existe
+    const eventosSuscriptosRaw = JSON.parse(localStorage.getItem('eventosSuscriptos') || '[]');
+    if (eventosSuscriptosRaw.length > 0) {
+      this.listaAsistCarga = eventosSuscriptosRaw.map((e: any) => {
+        const l = new ListaM(e.nombre, e.invitacion);
+        l.invitacion = e.invitacion;
+        (l as any).descripcion = e.descripcion || '';
+        (l as any).creadorNombre = e.creadorNombre || '';
+        return l;
+      });
+    }
   }
 
 
@@ -91,7 +103,9 @@ export class MenuPage implements OnInit {
     let listaActualizada = lista.filter(item => item.nombre !== idFav);
     this.listaAsistCarga = listaActualizada.slice(0, this.listaAsistCarga.length);
     this.listaAsist = listaActualizada;
-    localStorage.setItem('listas', JSON.stringify(listaActualizada))
+    localStorage.setItem('listas', JSON.stringify(listaActualizada));
+    // Permitir volver a suscribirse si se elimina de la lista suscripta
+    this.yaSuscripto = false;
   }
 
   // Busca la materia por código de invitación en todas las materias guardadas
@@ -109,6 +123,8 @@ export class MenuPage implements OnInit {
         eventoEncontrado.fechaCreacion,
         eventoEncontrado.invitacion
       );
+      // Verificar si ya está suscripto (solo si sigue en la lista)
+      this.yaSuscripto = this.listaAsistCarga.some(e => e.invitacion == eventoEncontrado.invitacion);
     } else {
       this.eventoBuscado = null;
       this.yaSuscripto = false;
@@ -118,16 +134,24 @@ export class MenuPage implements OnInit {
   // Suscribirse a la materia encontrada
   suscribirseAEvento() {
     if (this.eventoBuscado && !this.yaSuscripto) {
-      // Crear un objeto ListaM a partir del evento para la lista de suscriptos
       const invitacion = Number(this.eventoBuscado.invitacion) || Date.now();
       const listaSuscripta = new ListaM(
         this.eventoBuscado.nombre,
         invitacion
       );
       listaSuscripta.invitacion = invitacion;
+      // Agregar descripción al objeto ListaM para mostrarla en la lista
+      (listaSuscripta as any).descripcion = this.eventoBuscado.descripcion || '';
+      // Guardar el nombre del creador del evento
+      (listaSuscripta as any).creadorNombre = this.eventoBuscado.organizadorNombre || '';
       this.listaAsistCarga.push(listaSuscripta);
       localStorage.setItem('eventosSuscriptos', JSON.stringify(this.listaAsistCarga));
       this.yaSuscripto = true;
+      // Asegura que al suscribirse también se guarde el eventoDetalle correctamente
+      localStorage.setItem('eventoDetalle', JSON.stringify(this.eventoBuscado));
+      this.router.navigate(['menu/materia-detalle']);
+      this.eventoBuscado = null;
+      this.codigoInvitacion = '';
     }
   }
 
