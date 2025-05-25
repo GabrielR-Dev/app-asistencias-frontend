@@ -10,7 +10,7 @@ const routes: Routes = [
   },
   {
     path: 'materia-detalle',
-    loadChildren: () => import('../materia-detalle/materia-detalle.module').then(m => m.MateriaDetallePageModule)
+    loadChildren: () => import('../evento-detalle/evento-detalle.module').then(m => m.EventoDetallePageModule)
   }
 ];
 

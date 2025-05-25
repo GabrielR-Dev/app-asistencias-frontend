@@ -1,15 +1,15 @@
 import { Component, OnInit } from '@angular/core';
-import { Materia } from 'src/app/models/materia.model';
+import { Evento } from 'src/app/models/evento.model';
 import { Location } from '@angular/common';
 
 @Component({
-  selector: 'app-materia-detalle',
-  templateUrl: './materia-detalle.page.html',
-  styleUrls: ['./materia-detalle.page.scss'],
+  selector: 'app-evento-detalle',
+  templateUrl: './evento-detalle.page.html',
+  styleUrls: ['./evento-detalle.page.scss'],
   standalone: false
 })
-export class MateriaDetallePage implements OnInit {
-  materia: Materia | null = null;
+export class EventoDetallePage implements OnInit {
+  evento: Evento | null = null;
   clasesFuturas: any[] = [];
   clasesEnCurso: any[] = [];
   clasesPasadas: any[] = [];
@@ -17,18 +17,18 @@ export class MateriaDetallePage implements OnInit {
   constructor(private location: Location) {}
 
   ngOnInit() {
-    const materiaRaw = localStorage.getItem('materiaDetalle');
-    if (materiaRaw) {
-      const m = JSON.parse(materiaRaw);
-      this.materia = new Materia(
-        m.nombre,
-        m.creadorId,
-        m.descripcion,
-        m.profesorNombre,
-        m.profesorApellido,
-        m.puntuacion,
-        m.fechaCreacion,
-        m.invitacion
+    const eventoRaw = localStorage.getItem('eventoDetalle');
+    if (eventoRaw) {
+      const e = JSON.parse(eventoRaw);
+      this.evento = new Evento(
+        e.nombre,
+        e.creadorId,
+        e.descripcion,
+        e.organizadorNombre,
+        e.organizadorApellido,
+        e.puntuacion,
+        e.fechaCreacion,
+        e.invitacion
       );
     }
     // Simulación de clases (debería venir de un servicio o base de datos)
