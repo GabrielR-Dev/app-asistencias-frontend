@@ -40,7 +40,7 @@
             <p *ngIf="lista.invitacion"><strong>Código:</strong> {{ lista.invitacion }}</p>
           </ion-label>
           <ion-chip shape="round" (click)="detalle(lista.nombre, listaAsist)">Ver<ion-icon name="enter-outline"></ion-icon></ion-chip>
-          <ion-chip shape="round" (click)="eliminar(lista.nombre, listaAsist)">Eliminar Evento<ion-icon name="close-circle-outline"></ion-icon></ion-chip>
+          <ion-chip color="danger" shape="round" (click)="eliminar(lista.nombre, listaAsist)">Desuscribirse<ion-icon name="trash-outline"></ion-icon></ion-chip>
         </ion-item>
         <ion-button *ngIf="listaAsist.length > listaAsistCarga.length" horizontal="end" (click)="cargarMasListas()">Cargar más</ion-button>
       </ion-list>
@@ -79,6 +79,7 @@
   <ion-modal [isOpen]="modalAbierto" (didDismiss)="cerrarModal()">
     <ng-template>
       <ion-header>
+
         <ion-toolbar>
           <ion-title>Agregar nuevo evento</ion-title>
           <ion-buttons slot="end">
@@ -87,16 +88,20 @@
             </ion-button>
           </ion-buttons>
         </ion-toolbar>
+        
       </ion-header>
       <ion-content class="ion-padding">
+
         <ion-item>
           <ion-label position="floating">Nombre del evento</ion-label>
           <ion-input [(ngModel)]="eventoForm.nombre"></ion-input>
         </ion-item>
+
         <ion-item>
           <ion-label position="floating">Descripción</ion-label>
           <ion-input [(ngModel)]="eventoForm.descripcion"></ion-input>
         </ion-item>
+
         <!-- Campos ocultos para guardar el usuario -->
         <ion-input type="hidden" [(ngModel)]="eventoForm.creadorId"></ion-input>
         <ion-input type="hidden" [(ngModel)]="eventoForm.organizadorId"></ion-input>

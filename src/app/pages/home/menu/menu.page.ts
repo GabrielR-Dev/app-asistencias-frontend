@@ -94,15 +94,17 @@ export class MenuPage implements OnInit {
   detalle(id: any, lista: ListaM[]) {
     let detalle = lista.filter(item => item.nombre === id)
     localStorage.setItem('detalle', JSON.stringify(detalle))
-    this.router.navigate(['/detalle', id]);
+    this.router.navigate(['/evento-suscripto', id]);
   }
 
   //elimina una lista de lo que está cargado, de todas las que tenes y actualiza el localstorage
   //recordad de cambiar el nombre por id cuando se complete el proyecto
   eliminar(idFav: any, lista: ListaM[]) {
+
     let listaActualizada = lista.filter(item => item.nombre !== idFav);
     this.listaAsistCarga = listaActualizada.slice(0, this.listaAsistCarga.length);
     this.listaAsist = listaActualizada;
+    
     localStorage.setItem('listas', JSON.stringify(listaActualizada));
     // Permitir volver a suscribirse si se elimina de la lista suscripta
     this.yaSuscripto = false;
@@ -110,8 +112,10 @@ export class MenuPage implements OnInit {
 
   // Busca la materia por código de invitación en todas las materias guardadas
   agregarListaPorCodigo() {
+
     const eventosRaw = JSON.parse(localStorage.getItem('eventos') || '[]');
     const eventoEncontrado = eventosRaw.find((e: any) => e.invitacion == this.codigoInvitacion);
+
     if (eventoEncontrado) {
       this.eventoBuscado = new Evento(
         eventoEncontrado.nombre,
@@ -123,6 +127,7 @@ export class MenuPage implements OnInit {
         eventoEncontrado.fechaCreacion,
         eventoEncontrado.invitacion
       );
+
       // Verificar si ya está suscripto (solo si sigue en la lista)
       this.yaSuscripto = this.listaAsistCarga.some(e => e.invitacion == eventoEncontrado.invitacion);
     } else {
@@ -149,7 +154,6 @@ export class MenuPage implements OnInit {
       this.yaSuscripto = true;
       // Asegura que al suscribirse también se guarde el eventoDetalle correctamente
       localStorage.setItem('eventoDetalle', JSON.stringify(this.eventoBuscado));
-      this.router.navigate(['menu/materia-detalle']);
       this.eventoBuscado = null;
       this.codigoInvitacion = '';
     }
@@ -189,6 +193,7 @@ export class MenuPage implements OnInit {
     }
     // Usar datos del usuario logueado para el evento
     const usuarioLogueado = this.usuarioLogueado;
+
     const nuevoEvento = new Evento(
       this.eventoForm.nombre,
       usuarioLogueado.id,
@@ -196,9 +201,12 @@ export class MenuPage implements OnInit {
       usuarioLogueado.nombre,
       usuarioLogueado.apellido
     );
+
     this.eventos.push(nuevoEvento);
     localStorage.setItem('eventos', JSON.stringify(this.eventos));
+
     this.cerrarModal();
+
     this.eventoForm = {
       nombre: '',
       descripcion: '',
@@ -211,14 +219,17 @@ export class MenuPage implements OnInit {
 
   detalleEvento(evento: Evento) {
     // Guarda la materia seleccionada en localStorage y navega a la página de detalle
+
     localStorage.setItem('eventoDetalle', JSON.stringify(evento));
     this.router.navigate(['menu/materia-detalle']);
+
   }
 
   eliminarEvento(evento: Evento) {
     // Elimina la materia de la lista y del localStorage
     this.eventos = this.eventos.filter(e => e.invitacion !== evento.invitacion);
     localStorage.setItem('eventos', JSON.stringify(this.eventos));
+
     // Si la materia eliminada estaba siendo mostrada en el buscador, la oculta
     if (this.eventoBuscado && this.eventoBuscado.invitacion === evento.invitacion) {
       this.eventoBuscado = null;

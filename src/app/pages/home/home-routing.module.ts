@@ -10,15 +10,15 @@ const routes: Routes = [
       {
         path: 'menu',
         loadChildren: () => import('./menu/menu.module').then(m => m.MenuPageModule)
-      },/*
+      },
       {
         path: 'perfil',
-        loadChildren: () => import('../perfil/perfil.module').then(m => m.PerfilPageModule)
+        loadChildren: () => import('../home/perfil/perfil.module').then(m => m.PerfilPageModule)
       },
       {
         path: 'config',
-        loadChildren: () => import('../config/config.module').then(m => m.ConfigPageModule)
-      },*/
+        loadChildren: () => import('../home/config/config.module').then(m => m.ConfigPageModule)
+      },
       {
         path: '',
         redirectTo: 'menu',

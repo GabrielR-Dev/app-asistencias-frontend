@@ -55,22 +55,26 @@ export class EventoDetallePage implements OnInit {
   }
 
   cargarAsistenciasDesdeStorage() {
+
     this.asistenciasFuturas = [];
     this.asistenciasEnCurso = [];
     this.asistenciasPasadas = [];
     const key = 'asistencias';
     const asistenciasRaw = localStorage.getItem(key);
+
     if (asistenciasRaw) {
       const asistencias = JSON.parse(asistenciasRaw).map((a: any) => new Asistencia(
         a.fecha, a.horaInicio, a.horaFin, a.descripcion, a.lugar, a.direccion, a.creadorId, a.eventoId
       ));
       const ahora = new Date();
+
       for (const asistencia of asistencias) {
         const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
         const [horaInicio, minutoInicio] = asistencia.horaInicio.split(':').map(Number);
         const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
         const inicio = new Date(anio, mes - 1, dia, horaInicio, minutoInicio);
         const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
+
         if (ahora < inicio) {
           this.asistenciasFuturas.push(asistencia);
         } else if (ahora >= inicio && ahora <= fin) {
@@ -114,7 +118,7 @@ export class EventoDetallePage implements OnInit {
       return;
     }
     if (!this.nuevaAsistencia.descripcion) {
-      this.errorMsg = 'La descripción es obligatoria';
+      this.errorMsg = 'La descripcion es obligatoria';
       return;
     }
     if (!this.nuevaAsistencia.lugar) {
@@ -122,11 +126,13 @@ export class EventoDetallePage implements OnInit {
       return;
     }
     if (!this.nuevaAsistencia.direccion) {
-      this.errorMsg = 'La dirección es obligatoria';
+      this.errorMsg = 'La direccipn es obligatoria';
       return;
     }
     const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || 'null');
     let fecha = this.nuevaAsistencia.fecha;
+
+    //Formato de las fechas y horas
     if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
       const [y, m, d] = fecha.split('-');
       fecha = `${d}-${m}-${y}`;
@@ -134,26 +140,22 @@ export class EventoDetallePage implements OnInit {
       const [d, m, y] = fecha.split('/');
       fecha = `${d}-${m}-${y}`;
     }
+
     const nueva = new Asistencia(
+
       fecha,
       this.nuevaAsistencia.horaInicio,
       this.nuevaAsistencia.horaFin,
       this.nuevaAsistencia.descripcion,
       this.nuevaAsistencia.lugar,
       this.nuevaAsistencia.direccion,
-      /*creadorId*/ usuarioLogueado?.id || 0,
+
+      usuarioLogueado?.id || 0,
+      
       this.evento?.id || 0
     );
     this.asistenciasFuturas.push(nueva);
-    // Guardar en localStorage
-    const key = 'asistencias_' + (this.evento?.id || '');
-    let asistenciasGuardadas = [];
-    const asistenciasRaw = localStorage.getItem(key);
-    if (asistenciasRaw) {
-      asistenciasGuardadas = JSON.parse(asistenciasRaw);
-    }
-    asistenciasGuardadas.push(nueva);
-    localStorage.setItem(key, JSON.stringify(asistenciasGuardadas));
+
     this.cerrarModalAsistencia();
   }
 
@@ -171,29 +173,39 @@ export class EventoDetallePage implements OnInit {
 
   // Devuelve el tiempo restante en formato legible para una asistencia futura
   getTiempoRestante(asistencia: Asistencia): string {
+
     const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
     const [hora, minuto] = asistencia.horaInicio.split(':').map(Number);
     const inicio = new Date(anio, mes - 1, dia, hora, minuto);
     const ahora = new Date();
     const diff = inicio.getTime() - ahora.getTime();
-    if (diff <= 0) return '¡Ya puedes marcar asistencia!';
-    const horas = Math.floor(diff / (1000 * 60 * 60));
+
+    if (diff <= 0) return 'Ya puedes marcar asistencia!';
+    const dias = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const horas = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    if (horas > 0) {
+
+    if (dias > 0) {
+      return `Faltan ${dias}d ${horas}h ${minutos}m`;
+    } else if (horas > 0) {
       return `Faltan ${horas}h ${minutos}m`;
     } else {
       return `Faltan ${minutos} minutos`;
     }
   }
 
-  // Devuelve el tiempo restante para que termine la asistencia en curso
+  // devuelve el tiempo restante para que termine la asistencia en curso
   getTiempoRestanteEnCurso(asistencia: Asistencia): string {
+
     const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
     const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
     const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
+
     const ahora = new Date();
     const diff = fin.getTime() - ahora.getTime();
+
     if (diff <= 0) return '¡Asistencia finalizada!';
+
     const horas = Math.floor(diff / (1000 * 60 * 60));
     const minutos = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     if (horas > 0) {
@@ -203,7 +215,7 @@ export class EventoDetallePage implements OnInit {
     }
   }
 
-  // Formatea automáticamente la fecha a dd-mm-aaaa y la hora a HH:mm mientras se escribe
+  // Formatea fechas a dd-mm-aaaa y la hora a hh:mm mientras se escribe
   onFechaInput(event: any) {
     let value = event.target.value.replace(/[^0-9]/g, '');
     if (value.length > 2) value = value.slice(0, 2) + '-' + value.slice(2);
@@ -222,36 +234,40 @@ export class EventoDetallePage implements OnInit {
   actualizarEstadoAsistencias() {
     const ahora = new Date();
     this.asistenciasFuturas = this.asistenciasFuturas.filter(asistencia => {
+
       // Convertir fecha y horaInicio a objeto Date
       const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
       const [hora, minuto] = asistencia.horaInicio.split(':').map(Number);
       const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
       const inicio = new Date(anio, mes - 1, dia, hora, minuto);
       const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
-      // Si ya está en curso, mover a asistenciasEnCurso
+
+      // Si ya esta en curso, mover a asistenciasEnCurso
       if (ahora >= inicio && ahora <= fin) {
         this.asistenciasEnCurso.push(asistencia);
-        return false; // quitar de futuras
+        return false; // quitar de fituras
       }
-      // Si ya pasó, mover a asistenciasPasadas
+      // Si ya paso mover a asistenciasPasadas
       if (ahora > fin) {
         this.asistenciasPasadas.push(asistencia);
         return false;
       }
       return true; // sigue siendo futura
     });
-    // Ahora también revisamos si alguna en curso debe pasar a pasada
+
     this.asistenciasEnCurso = this.asistenciasEnCurso.filter(asistencia => {
       const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
       const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
       const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
+
       if (ahora > fin) {
         this.asistenciasPasadas.push(asistencia);
         return false;
       }
+
       return true;
     });
-    // Limpiar duplicados en EnCurso y Pasadas
+    // Eliminar si se repite EnCurso y Pasadas
     this.asistenciasEnCurso = this.asistenciasEnCurso.filter((a, i, arr) =>
       arr.findIndex(b => b.fecha === a.fecha && b.horaInicio === a.horaInicio) === i
     );

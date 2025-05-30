@@ -31,6 +31,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/home/evento-suscripto/evento-suscripto.module').then( m => m.EventoSuscriptoPageModule)
   },
 
+
 ];
 
 @NgModule({
