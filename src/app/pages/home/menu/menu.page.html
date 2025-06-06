@@ -8,7 +8,8 @@
   </ion-header>
 
   <!-- Resultado de búsqueda de evento por código -->
-  <ion-card *ngIf="eventoBuscado">
+  <!--<ion-card *ngIf="eventoBuscado">
+    
     <ion-card-header>
       <ion-card-title>{{ eventoBuscado.nombre }}</ion-card-title>
       <ion-card-subtitle>{{ eventoBuscado.descripcion }}</ion-card-subtitle>
@@ -23,7 +24,8 @@
         <ion-badge color="primary" *ngIf="yaSuscripto">Ya suscripto</ion-badge>
       </div>
     </ion-card-content>
-  </ion-card>
+
+  </ion-card>-->
 
   <ion-card class="contenedor-card">
     <ion-card-header>
@@ -37,7 +39,7 @@
             <h2>{{ lista.nombre }}</h2>
             <p>{{ lista.descripcion }}</p>
             <p *ngIf="lista.creadorNombre"><strong>Creador:</strong> {{ lista.creadorNombre }}</p>
-            <p *ngIf="lista.invitacion"><strong>Código:</strong> {{ lista.invitacion }}</p>
+            <p *ngIf="lista.codigoInvitacion"><strong>Código:</strong> {{ lista }}</p>
           </ion-label>
           <ion-chip shape="round" (click)="detalle(lista.nombre, listaAsist)">Ver<ion-icon name="enter-outline"></ion-icon></ion-chip>
           <ion-chip color="danger" shape="round" (click)="eliminar(lista.nombre, listaAsist)">Desuscribirse<ion-icon name="trash-outline"></ion-icon></ion-chip>
@@ -55,10 +57,10 @@
       <p *ngIf="eventos.length === 0">No hay eventos creados.</p>
       <ion-list>
         <ion-item *ngFor="let evento of eventos">
-          <ion-label class="ion-text-wrap">
+          <ion-label class="ion-text-wrap" id ='{{evento.id}}'>
             <h2>{{ evento.nombre }}</h2>
             <p>{{ evento.descripcion }}</p>
-            <p *ngIf="evento.invitacion"><strong>Código:</strong> {{ evento.invitacion }}</p>
+            <p *ngIf="evento.codigoInvitacion"><strong>Código:</strong> {{ evento.codigoInvitacion }}</p>
             <p *ngIf="evento.organizadorNombre"><strong>Organizador:</strong> {{ evento.organizadorNombre }} {{ evento.organizadorApellido }}</p>
           </ion-label>
           <ion-chip shape="round" (click)="detalleEvento(evento)">Ver<ion-icon name="enter-outline"></ion-icon></ion-chip>
@@ -102,11 +104,6 @@
           <ion-input [(ngModel)]="eventoForm.descripcion"></ion-input>
         </ion-item>
 
-        <!-- Campos ocultos para guardar el usuario -->
-        <ion-input type="hidden" [(ngModel)]="eventoForm.creadorId"></ion-input>
-        <ion-input type="hidden" [(ngModel)]="eventoForm.organizadorId"></ion-input>
-        <ion-input type="hidden" [(ngModel)]="eventoForm.organizadorNombre"></ion-input>
-        <ion-input type="hidden" [(ngModel)]="eventoForm.organizadorApellido"></ion-input>
         <ion-button expand="block" (click)="guardaEvento()">Guardar</ion-button>
       </ion-content>
     </ng-template>

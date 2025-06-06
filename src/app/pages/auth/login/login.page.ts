@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { ApiAuthService } from 'src/app/services/api/apiAuth/api-auth.service';
 import { AuthService } from 'src/app/services/auth.services';
 
 @Component({
@@ -15,10 +17,11 @@ export class LoginPage {
   password: string = '';
   errorMessage: string = '';
   mostrarPassword: boolean = false;
+  usuario: any;
 
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private apiAuth: ApiAuthService) { }
 
-  async login() {
+  /*async login() {
     // Validación de campos vacíos
     if (!this.email || !this.password) {
       this.errorMessage = 'Por favor, complete todos los campos.';
@@ -61,12 +64,31 @@ export class LoginPage {
         this.errorMessage = error.message;
       }
     }
+  }*/
+  async login() {
+    if (!this.email || !this.password) {
+      this.errorMessage = 'Por favor, complete todos los campos.';
+      return;
+    }
+
+    try {
+      const response = await firstValueFrom(this.apiAuth.loginApi(this.email, this.password));
+      // Guardar token u otro dato si es necesario
+      localStorage.setItem('usuarioLogueado', JSON.stringify(response));
+      this.errorMessage = '';
+      window.location.href = '/home/menu';
+      return;
+    } catch (error: any) {
+      this.errorMessage = error.error?.text || error.error || 'Error al iniciar sesión';
+    }
   }
+
+
   //Ocultar contraseña
   ocultarContra() {
     this.mostrarPassword = !this.mostrarPassword;
   }
-  volverTabs(){
+  volverTabs() {
     this.router.navigate(['/home']);
   }
   irMenu() {

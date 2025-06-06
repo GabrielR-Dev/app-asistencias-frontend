@@ -1,35 +1,47 @@
 export class Evento {
-  id: number;
-  nombre: string;
-  creadorId: number;
-  descripcion?: string;
-  puntuacion?: number;
-  organizadorNombre?: string;
-  organizadorApellido?: string;
-  fechaCreacion?: string;
-  invitacion?: number;
-  creadorNombre?: string; // Nuevo campo para el nombre del creador
+  public id: any;
+  public nombre: String;
+  public descripcion: String;
+  public organizadorNombre: String;
+  public organizadorApellido: String;
+  public fechaCreacion: String;
+  public codigoInvitacion: String;
+  public creadorNombre: String;
+  public creadorApellido: String;
 
   constructor(
-    nombre: string,
-    creadorId: number,
-    descripcion: string = '',
-    organizadorNombre: string = '',
-    organizadorApellido: string = '',
-    puntuacion?: number,
-    fechaCreacion?: string,
-    invitacion?: number,
-    creadorNombre?: string // Nuevo parámetro opcional
+    id: any = 0 as any,
+    nombre: String = '',
+    descripcion: String = '',
+    organizadorNombre: String = '',
+    organizadorApellido: String = '',
+    fechaCreacion: String = '',
+    codigoInvitacion: String = '',
+    creadorNombre: String = '',
+    creadorApellido: String = ''
   ) {
-    this.id = Date.now();
+    this.id = id;
     this.nombre = nombre;
-    this.creadorId = creadorId;
     this.descripcion = descripcion;
     this.organizadorNombre = organizadorNombre;
     this.organizadorApellido = organizadorApellido;
-    this.puntuacion = puntuacion;
-    this.fechaCreacion = fechaCreacion || new Date().toISOString();
-    this.invitacion = invitacion || (this.id + Math.floor(Math.random() * 1000));
-    this.creadorNombre = creadorNombre || organizadorNombre;
+    this.fechaCreacion = fechaCreacion;
+    this.codigoInvitacion = codigoInvitacion;
+    this.creadorNombre = creadorNombre;
+    this.creadorApellido = creadorApellido;
+  }
+
+  toString(): string {
+    return `Evento {
+    id: ${this.id},
+    nombre: ${this.nombre},
+    descripcion: ${this.descripcion},
+    organizadorNombre: ${this.organizadorNombre},
+    organizadorApellido: ${this.organizadorApellido},
+    fechaCreacion: ${this.fechaCreacion},
+    codigoInvitacion: ${this.codigoInvitacion},
+    creadorNombre: ${this.creadorNombre},
+    creadorApellido: ${this.creadorApellido}
+  }`;
   }
 }

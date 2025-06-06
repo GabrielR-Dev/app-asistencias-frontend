@@ -1,30 +1,30 @@
 export class Asistencia {
-  fecha: string; // dd-mm-aaaa
-  horaInicio: string; // HH:mm
-  horaFin: string; // HH:mm
+  //titulo: string;
   descripcion: string;
-  lugar: string;
+  nombreLugar: string;
   direccion: string;
-  creadorId: number; // id del usuario logueado
-  eventoId: number; // id del evento al que pertenece la asistencia
+  fecha: string;// dd-mm-aaaa
+  horaInicio: string;// HH:mm
+  horaFin: string;// HH:mm
+  eventoId: number;// id del evento al que pertenece la asistencia
 
   constructor(
+    //titulo:string,
     fecha: string,
     horaInicio: string,
     horaFin: string,
     descripcion: string,
     lugar: string,
     direccion: string,
-    creadorId: number,
     eventoId: number
   ) {
+    //this.titulo = titulo;
     this.fecha = fecha;
     this.horaInicio = horaInicio;
     this.horaFin = horaFin;
     this.descripcion = descripcion;
-    this.lugar = lugar;
+    this.nombreLugar = lugar;
     this.direccion = direccion;
-    this.creadorId = creadorId;
     this.eventoId = eventoId;
   }
 }

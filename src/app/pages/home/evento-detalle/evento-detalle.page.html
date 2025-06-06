@@ -14,8 +14,8 @@
       <ion-card-subtitle>{{ evento.descripcion }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Código de invitación:</strong> {{ evento.invitacion }}</p>
-      <p><strong>Fecha de creación:</strong> {{ evento.fechaCreacion | date:'medium' }}</p>
+      <p><strong>Código de invitación:</strong> {{ evento.codigoInvitacion }}</p>
+      <p><strong>Fecha de creación:</strong> {{ evento.fechaCreacion?.toString() | date:'medium' }}</p>
       <!-- Aquí puedes agregar más detalles del evento -->
     </ion-card-content>
   </ion-card>
@@ -27,7 +27,7 @@
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
         <p><strong>Horario:</strong> {{ asistencia.horaInicio }} - {{ asistencia.horaFin }}</p>
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
-        <p><strong>Lugar:</strong> {{ asistencia.lugar }}</p>
+        <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
         <p style="color: #3880ff; font-weight: bold;">
           {{ getTiempoRestante(asistencia) }}
@@ -40,7 +40,7 @@
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
         <p><strong>Horario:</strong> {{ asistencia.horaInicio }} - {{ asistencia.horaFin }}</p>
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
-        <p><strong>Lugar:</strong> {{ asistencia.lugar }}</p>
+        <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
         <p style="color: red; font-weight: bold;">
           {{ getTiempoRestanteEnCurso(asistencia) }}
@@ -54,7 +54,7 @@
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
         <p><strong>Horario:</strong> {{ asistencia.horaInicio }} - {{ asistencia.horaFin }}</p>
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
-        <p><strong>Lugar:</strong> {{ asistencia.lugar }}</p>
+        <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
       </ion-label>
     </ion-item>
@@ -95,7 +95,7 @@
         </ion-item>
         <ion-item>
           <ion-label position="floating">Lugar</ion-label>
-          <ion-input [(ngModel)]="nuevaAsistencia.lugar" type="text"></ion-input>
+          <ion-input [(ngModel)]="nuevaAsistencia.nombreLugar" type="text"></ion-input>
         </ion-item>
         <ion-item>
           <ion-label position="floating">Dirección</ion-label>

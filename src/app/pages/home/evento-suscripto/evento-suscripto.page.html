@@ -7,16 +7,16 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content class="ion-padding">
+<!--<ion-content class="ion-padding">
   <ion-card *ngIf="evento">
     <ion-card-header>
       <ion-card-title>{{ evento.nombre }}</ion-card-title>
       <ion-card-subtitle>{{ evento.descripcion }}</ion-card-subtitle>
     </ion-card-header>
     <ion-card-content>
-      <p><strong>Código de invitación:</strong> {{ evento.invitacion }}</p>
-      <p><strong>Fecha de creación:</strong> {{ evento.fechaCreacion | date:'medium' }}</p>
-      <!-- Aquí puedes agregar más detalles del evento -->
+      <p><strong>Código de invitación:</strong> {{ evento.codigoInvitacion }}</p>
+      <p><strong>Fecha de creación:</strong> {{ evento.fechaCreacion?.toString() | date:'medium' }}</p>
+      <!-- Aquí puedes agregar más detalles del evento 
     </ion-card-content>
   </ion-card>
   <ion-list>
@@ -27,7 +27,7 @@
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
         <p><strong>Horario:</strong> {{ asistencia.horaInicio }} - {{ asistencia.horaFin }}</p>
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
-        <p><strong>Lugar:</strong> {{ asistencia.lugar }}</p>
+        <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
         <p style="color: #3880ff; font-weight: bold;">
           {{ getTiempoRestante(asistencia) }}
@@ -40,7 +40,7 @@
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
         <p><strong>Horario:</strong> {{ asistencia.horaInicio }} - {{ asistencia.horaFin }}</p>
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
-        <p><strong>Lugar:</strong> {{ asistencia.lugar }}</p>
+        <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
         <p style="color: red; font-weight: bold;">
           {{ getTiempoRestanteEnCurso(asistencia) }}
@@ -54,7 +54,7 @@
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
         <p><strong>Horario:</strong> {{ asistencia.horaInicio }} - {{ asistencia.horaFin }}</p>
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
-        <p><strong>Lugar:</strong> {{ asistencia.lugar }}</p>
+        <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
       </ion-label>
     </ion-item>
@@ -137,7 +137,7 @@
     </ion-card-header>
     <ion-card-content>
       <p>Aquí se mostrará dónde y cuándo se va a marcar la presencialidad.</p>
-      <!-- Aquí puedes agregar inputs para fecha, lugar, etc. -->
+      <!-- Aquí puedes agregar inputs para fecha, lugar, etc. 
     </ion-card-content>
   </ion-card>
-</ion-content>
+</ion-content>-->

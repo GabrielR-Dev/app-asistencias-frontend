@@ -10,14 +10,14 @@ import { Location } from '@angular/common';
   styleUrls: ['./evento-suscripto.page.scss'],
   standalone: false
 }) 
-export class EventoSuscriptoPage implements OnInit {
-  evento: Evento | null = null;
+export class EventoSuscriptoPage /*implements OnInit*/ {
+  /*evento: Evento | null = null;
   asistenciasFuturas: Asistencia[] = [];
   asistenciasEnCurso: Asistencia[] = [];
   asistenciasPasadas: Asistencia[] = [];
   mostrarPresencialidad = false;
   modalAsistenciaAbierto = false;
-  nuevaAsistencia = { fecha: '', horaInicio: '', horaFin: '', descripcion: '', lugar: '', direccion: '' };
+  nuevaAsistencia = Asistencia;
   errorMsg: string = '';
 
   // Nuevas variables para el modal de código
@@ -41,7 +41,7 @@ export class EventoSuscriptoPage implements OnInit {
         e.fechaCreacion,
         e.invitacion
       );
-      this.evento.id = e.id; // Asegura que el id esté presente
+      this.evento.id = e.id;
     }
 
     this.cargarAsistenciasDesdeStorage();
@@ -126,7 +126,7 @@ export class EventoSuscriptoPage implements OnInit {
       this.errorMsg = 'La descripción es obligatoria';
       return;
     }
-    if (!this.nuevaAsistencia.lugar) {
+    if (!this.nuevaAsistencia.nombreLugar) {
       this.errorMsg = 'El lugar es obligatorio';
       return;
     }
@@ -151,10 +151,10 @@ export class EventoSuscriptoPage implements OnInit {
       this.nuevaAsistencia.horaInicio,
       this.nuevaAsistencia.horaFin,
       this.nuevaAsistencia.descripcion,
-      this.nuevaAsistencia.lugar,
+      this.nuevaAsistencia.nombreLugar,
       this.nuevaAsistencia.direccion,
-      /*creadorId*/ usuarioLogueado?.id || 0,
-      this.evento?.id || 0
+     usuarioLogueado?.id || 0,
+      this.evento.id
     );
 
     this.asistenciasFuturas.push(nueva);
@@ -285,5 +285,5 @@ export class EventoSuscriptoPage implements OnInit {
     this.asistenciasPasadas = this.asistenciasPasadas.filter((a, i, arr) =>
       arr.findIndex(b => b.fecha === a.fecha && b.horaInicio === a.horaInicio) === i
     );
-  }
+  }*/
 }

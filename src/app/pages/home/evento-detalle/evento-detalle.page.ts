@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Evento } from 'src/app/models/evento.model';
 import { Asistencia } from 'src/app/models/asistencia.model';
 import { Location } from '@angular/common';
+import { ApiAsistenciasService } from 'src/app/services/api/apiAsistencias/api-asistencias.service';
 
 @Component({
   selector: 'app-evento-detalle',
@@ -16,7 +17,7 @@ export class EventoDetallePage implements OnInit {
   asistenciasPasadas: Asistencia[] = [];
   mostrarPresencialidad = false;
   modalAsistenciaAbierto = false;
-  nuevaAsistencia = { fecha: '', horaInicio: '', horaFin: '', descripcion: '', lugar: '', direccion: '' };
+  nuevaAsistencia = { fecha: '', horaInicio: '', horaFin: '', descripcion: '', nombreLugar: '', direccion: '' };
   errorMsg: string = '';
 
   // Nuevas variables para el modal de código
@@ -24,66 +25,68 @@ export class EventoDetallePage implements OnInit {
   codigoAsistencia: string = '';
   asistenciaSeleccionada: Asistencia | null = null;
 
-  constructor(private location: Location) { }
+  constructor(private location: Location, private apiAsistencias: ApiAsistenciasService) { }
 
   ngOnInit() {
-    const eventoRaw = localStorage.getItem('eventoDetalle');
-    if (eventoRaw) {
-      const e = JSON.parse(eventoRaw);
-      this.evento = new Evento(
-        e.nombre,
-        e.creadorId,
-        e.descripcion,
-        e.organizadorNombre,
-        e.organizadorApellido,
-        e.puntuacion,
-        e.fechaCreacion,
-        e.invitacion
-      );
-      this.evento.id = e.id; // Asegura que el id esté presente
-    }
 
-    this.cargarAsistenciasDesdeStorage();
+    const storedEvento = localStorage.getItem('eventoDetalle');
+    if (storedEvento) {
+      this.evento = JSON.parse(storedEvento);
+    } else {
+      this.evento = null;
+    }
+    this.cargarAsistenciasDesdeStorage(this.evento?.id);
+    //this.cargarAsistenciasDesdeStorage();
     setInterval(() => this.actualizarEstadoAsistencias(), 20000);
     this.actualizarEstadoAsistencias();
   }
 
 
   ionViewWillEnter() {
-    this.cargarAsistenciasDesdeStorage();
+    //this.cargarAsistenciasDesdeStorage();
     this.actualizarEstadoAsistencias();
   }
 
-  cargarAsistenciasDesdeStorage() {
 
+
+  cargarAsistenciasDesdeStorage(eventoId: number) {
     this.asistenciasFuturas = [];
     this.asistenciasEnCurso = [];
     this.asistenciasPasadas = [];
-    const key = 'asistencias';
-    const asistenciasRaw = localStorage.getItem(key);
 
-    if (asistenciasRaw) {
-      const asistencias = JSON.parse(asistenciasRaw).map((a: any) => new Asistencia(
-        a.fecha, a.horaInicio, a.horaFin, a.descripcion, a.lugar, a.direccion, a.creadorId, a.eventoId
-      ));
-      const ahora = new Date();
 
-      for (const asistencia of asistencias) {
-        const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
-        const [horaInicio, minutoInicio] = asistencia.horaInicio.split(':').map(Number);
-        const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
-        const inicio = new Date(anio, mes - 1, dia, horaInicio, minutoInicio);
-        const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
+    this.apiAsistencias.getAsistenciasPorEvento(eventoId).subscribe({
+      next: (asistenciasApi: Asistencia[]) => {
+        // Transformamos las asistencias crudas en instancias de la clase
+        const asistencias = asistenciasApi.map(a => new Asistencia(
+          a.fecha, a.horaInicio, a.horaFin, a.descripcion, a.nombreLugar, a.direccion, eventoId
+        ));
 
-        if (ahora < inicio) {
-          this.asistenciasFuturas.push(asistencia);
-        } else if (ahora >= inicio && ahora <= fin) {
-          this.asistenciasEnCurso.push(asistencia);
-        } else {
-          this.asistenciasPasadas.push(asistencia);
+        // Guardamos en localStorage para compatibilidad
+        localStorage.setItem('asistencias', JSON.stringify(asistencias));
+
+        const ahora = new Date();
+
+        for (const asistencia of asistencias) {
+          const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
+          const [horaInicio, minutoInicio] = asistencia.horaInicio.split(':').map(Number);
+          const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
+          const inicio = new Date(anio, mes - 1, dia, horaInicio, minutoInicio);
+          const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
+
+          if (ahora < inicio) {
+            this.asistenciasFuturas.push(asistencia);
+          } else if (ahora >= inicio && ahora <= fin) {
+            this.asistenciasEnCurso.push(asistencia);
+          } else {
+            this.asistenciasPasadas.push(asistencia);
+          }
         }
+      },
+      error: error => {
+        console.error('Error al cargar asistencias desde la API', error);
       }
-    }
+    });
   }
 
   volverAtras() {
@@ -95,7 +98,7 @@ export class EventoDetallePage implements OnInit {
   }
 
   abrirModalAsistencia() {
-    this.nuevaAsistencia = { fecha: '', horaInicio: '', horaFin: '', descripcion: '', lugar: '', direccion: '' };
+    this.nuevaAsistencia = new Asistencia('', '', '', '', '', '', this.evento?.id || 0);
     this.modalAsistenciaAbierto = true;
   }
 
@@ -105,6 +108,8 @@ export class EventoDetallePage implements OnInit {
 
   agregarAsistenciaFutura() {
     this.errorMsg = '';
+
+    // Validaciones
     if (!this.nuevaAsistencia.fecha || !/^[0-9]{2}-[0-9]{2}-[0-9]{4}$/.test(this.nuevaAsistencia.fecha)) {
       this.errorMsg = 'La fecha es obligatoria y debe tener formato dd-mm-aaaa';
       return;
@@ -118,21 +123,23 @@ export class EventoDetallePage implements OnInit {
       return;
     }
     if (!this.nuevaAsistencia.descripcion) {
-      this.errorMsg = 'La descripcion es obligatoria';
+      this.errorMsg = 'La descripción es obligatoria';
       return;
     }
-    if (!this.nuevaAsistencia.lugar) {
+    if (!this.nuevaAsistencia.nombreLugar) {
       this.errorMsg = 'El lugar es obligatorio';
       return;
     }
     if (!this.nuevaAsistencia.direccion) {
-      this.errorMsg = 'La direccipn es obligatoria';
+      this.errorMsg = 'La dirección es obligatoria';
       return;
     }
+
+    // Obtener usuario
     const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || 'null');
     let fecha = this.nuevaAsistencia.fecha;
 
-    //Formato de las fechas y horas
+    // Convertir fecha si viene en otro formato
     if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
       const [y, m, d] = fecha.split('-');
       fecha = `${d}-${m}-${y}`;
@@ -141,22 +148,29 @@ export class EventoDetallePage implements OnInit {
       fecha = `${d}-${m}-${y}`;
     }
 
+    // Crear objeto Asistencia
     const nueva = new Asistencia(
-
+      //this.nuevaAsistencia.titulo,
       fecha,
       this.nuevaAsistencia.horaInicio,
       this.nuevaAsistencia.horaFin,
       this.nuevaAsistencia.descripcion,
-      this.nuevaAsistencia.lugar,
+      this.nuevaAsistencia.nombreLugar,
       this.nuevaAsistencia.direccion,
-
-      usuarioLogueado?.id || 0,
-      
       this.evento?.id || 0
     );
-    this.asistenciasFuturas.push(nueva);
 
-    this.cerrarModalAsistencia();
+    // Enviar al backend
+    this.apiAsistencias.crearAsistencia(nueva).subscribe({
+      next: (asistenciaCreada) => {
+        this.asistenciasFuturas.push(nueva);
+        this.cerrarModalAsistencia();
+      },
+      error: (error: any) => {
+        console.error('Error al crear asistencia', error);
+        this.errorMsg = 'No se pudo crear la asistencia. Intenta nuevamente.';
+      }
+    });
   }
 
   abrirModalCodigo(asistencia: Asistencia) {
