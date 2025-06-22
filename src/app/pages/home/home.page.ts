@@ -9,12 +9,17 @@ import { Router } from '@angular/router';
   standalone: false
 })
 export class HomePage {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) { }
 
+  //Borramos historias de LocalStorage
   async logout() {
-    await this.authService.logout();
-    localStorage.removeItem('user');
+    //await this.authService.logout();
     localStorage.removeItem('usuarioLogueado');
+    localStorage.removeItem('suscripciones');
+    localStorage.removeItem('eventos');
     this.router.navigateByUrl('/login', { replaceUrl: true });
+    localStorage.removeItem('presentismosMarcados');
+    localStorage.removeItem('asistencia');
+
   }
 }

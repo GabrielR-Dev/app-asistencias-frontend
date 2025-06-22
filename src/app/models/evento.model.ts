@@ -1,5 +1,5 @@
 export class Evento {
-  public id: any;
+  public id: number;
   public nombre: String;
   public descripcion: String;
   public organizadorNombre: String;
@@ -10,7 +10,7 @@ export class Evento {
   public creadorApellido: String;
 
   constructor(
-    id: any = 0 as any,
+    id: number = 0 as any,
     nombre: String = '',
     descripcion: String = '',
     organizadorNombre: String = '',

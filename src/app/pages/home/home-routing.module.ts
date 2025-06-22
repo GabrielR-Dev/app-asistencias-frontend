@@ -16,10 +16,6 @@ const routes: Routes = [
         loadChildren: () => import('../home/perfil/perfil.module').then(m => m.PerfilPageModule)
       },
       {
-        path: 'config',
-        loadChildren: () => import('../home/config/config.module').then(m => m.ConfigPageModule)
-      },
-      {
         path: '',
         redirectTo: 'menu',
         pathMatch: 'full',

@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Evento } from 'src/app/models/evento.model';
 import { Asistencia } from 'src/app/models/asistencia.model';
 import { Location } from '@angular/common';
 import { ApiAsistenciasService } from 'src/app/services/api/apiAsistencias/api-asistencias.service';
+import { CodigoAsistencia } from 'src/app/models/codigoAsistencia';
+import { ApiCodigosService } from 'src/app/services/api/apiCodigos/api-codigos.service';
 
 @Component({
   selector: 'app-evento-detalle',
@@ -11,60 +13,78 @@ import { ApiAsistenciasService } from 'src/app/services/api/apiAsistencias/api-a
   standalone: false
 })
 export class EventoDetallePage implements OnInit {
+
   evento: Evento | null = null;
   asistenciasFuturas: Asistencia[] = [];
   asistenciasEnCurso: Asistencia[] = [];
   asistenciasPasadas: Asistencia[] = [];
   mostrarPresencialidad = false;
   modalAsistenciaAbierto = false;
-  nuevaAsistencia = { fecha: '', horaInicio: '', horaFin: '', descripcion: '', nombreLugar: '', direccion: '' };
+  nuevaAsistencia = { titulo: "", fecha: '', horaInicio: '', horaFin: '', descripcion: '', nombreLugar: '', direccion: '', cantColaboradores: 0 };
   errorMsg: string = '';
 
-  // Nuevas variables para el modal de código
   modalCodigoAbierto = false;
-  codigoAsistencia: string = '';
+  codigoAsistencia!: CodigoAsistencia;
   asistenciaSeleccionada: Asistencia | null = null;
 
-  constructor(private location: Location, private apiAsistencias: ApiAsistenciasService) { }
+  constructor(
+    private location: Location,
+    private apiAsistencias: ApiAsistenciasService,
+    private apiCodigo: ApiCodigosService
+  ) { }
+
+
+
 
   ngOnInit() {
-
     const storedEvento = localStorage.getItem('eventoDetalle');
     if (storedEvento) {
       this.evento = JSON.parse(storedEvento);
     } else {
       this.evento = null;
     }
-    this.cargarAsistenciasDesdeStorage(this.evento?.id);
-    //this.cargarAsistenciasDesdeStorage();
-    setInterval(() => this.actualizarEstadoAsistencias(), 20000);
-    this.actualizarEstadoAsistencias();
-  }
-
-
-  ionViewWillEnter() {
-    //this.cargarAsistenciasDesdeStorage();
-    this.actualizarEstadoAsistencias();
+    this.cargarAsistencias(this.evento!.id);
+    setInterval(() => {
+      this.actualizarEstadoAsistenciasDesdeLocalStorage();
+    }, 5000);
   }
 
 
 
-  cargarAsistenciasDesdeStorage(eventoId: number) {
+
+  ionViewWillLeave() {
+    localStorage.removeItem('eventoDetalle');
+    localStorage.removeItem('eventos');
+    localStorage.removeItem('asistencias');
+  }
+
+
+
+
+
+
+  cargarAsistencias(eventoId: number) {
     this.asistenciasFuturas = [];
     this.asistenciasEnCurso = [];
     this.asistenciasPasadas = [];
 
-
     this.apiAsistencias.getAsistenciasPorEvento(eventoId).subscribe({
       next: (asistenciasApi: Asistencia[]) => {
-        // Transformamos las asistencias crudas en instancias de la clase
         const asistencias = asistenciasApi.map(a => new Asistencia(
-          a.fecha, a.horaInicio, a.horaFin, a.descripcion, a.nombreLugar, a.direccion, eventoId
+          a.titulo,
+          a.fecha,
+          a.horaInicio,
+          a.horaFin,
+          a.descripcion,
+          a.nombreLugar,
+          a.direccion,
+          a.cantColaboradores,
+          eventoId,
+          a.id
         ));
 
-        // Guardamos en localStorage para compatibilidad
         localStorage.setItem('asistencias', JSON.stringify(asistencias));
-
+        console.log(asistencias);
         const ahora = new Date();
 
         for (const asistencia of asistencias) {
@@ -89,27 +109,107 @@ export class EventoDetallePage implements OnInit {
     });
   }
 
-  volverAtras() {
-    this.location.back();
+
+
+
+  copiado = false;
+  async copiarCodigo(codigo: String) {
+    try {
+      await navigator.clipboard.writeText(codigo.toString());
+      this.copiado = true;
+      setTimeout(() => this.copiado = false, 2000); // vuelve al icono original después de 2 seg
+    } catch (err) {
+      console.error('Error al copiar:', err);
+    }
   }
+
+
+
+
+  actualizarEstadoAsistenciasDesdeLocalStorage() {
+    const asistenciasStr = localStorage.getItem('asistencias');
+    if (!asistenciasStr) return;
+
+    const asistenciasGuardadas: Asistencia[] = JSON.parse(asistenciasStr);
+    this.asistenciasFuturas = [];
+    this.asistenciasEnCurso = [];
+    this.asistenciasPasadas = [];
+
+    const ahora = new Date();
+
+    for (const asistencia of asistenciasGuardadas) {
+      const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
+      const [horaInicio, minutoInicio] = asistencia.horaInicio.split(':').map(Number);
+      const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
+      const inicio = new Date(anio, mes - 1, dia, horaInicio, minutoInicio);
+      const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
+
+      if (ahora < inicio) {
+        this.asistenciasFuturas.push(asistencia);
+      } else if (ahora >= inicio && ahora <= fin) {
+        this.asistenciasEnCurso.push(asistencia);
+      } else {
+        this.asistenciasPasadas.push(asistencia);
+        /*this.apiCodigo.deleteCodigos(asistencia.id!).subscribe({
+          next: () => {
+            console.log(`Códigos de asistencia ${asistencia.id} eliminados`);
+          },
+          error: (err) => {
+            console.error(`Error al eliminar códigos de asistencia ${asistencia.id}:`, err);
+            if (err.status === 403) {
+              console.warn('No tenés permisos suficientes para eliminar este código.');
+            }
+          }
+        });*/
+      }
+    }
+  }
+
+
+
+
 
   mostrarAgregarPresencialidad() {
     this.mostrarPresencialidad = !this.mostrarPresencialidad;
   }
 
+
+
+
+
+
   abrirModalAsistencia() {
-    this.nuevaAsistencia = new Asistencia('', '', '', '', '', '', this.evento?.id || 0);
+    //Con la instancia muestramos el contenido del modal
+    this.nuevaAsistencia = new Asistencia(
+      '',                          // titulo
+      '',                          // fecha
+      '',                          // horaInicio
+      '',                          // horaFin
+      '',                          // descripcion
+      '',                          // lugar
+      '',                          // direccion
+      this.evento?.id || 0,        // eventoId
+      0,                           // cantColaboradores
+    );
     this.modalAsistenciaAbierto = true;
   }
+
+
+
+
 
   cerrarModalAsistencia() {
     this.modalAsistenciaAbierto = false;
   }
 
+
+
+
+
+
   agregarAsistenciaFutura() {
     this.errorMsg = '';
 
-    // Validaciones
     if (!this.nuevaAsistencia.fecha || !/^[0-9]{2}-[0-9]{2}-[0-9]{4}$/.test(this.nuevaAsistencia.fecha)) {
       this.errorMsg = 'La fecha es obligatoria y debe tener formato dd-mm-aaaa';
       return;
@@ -135,11 +235,7 @@ export class EventoDetallePage implements OnInit {
       return;
     }
 
-    // Obtener usuario
-    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || 'null');
     let fecha = this.nuevaAsistencia.fecha;
-
-    // Convertir fecha si viene en otro formato
     if (/^\d{4}-\d{2}-\d{2}$/.test(fecha)) {
       const [y, m, d] = fecha.split('-');
       fecha = `${d}-${m}-${y}`;
@@ -148,46 +244,102 @@ export class EventoDetallePage implements OnInit {
       fecha = `${d}-${m}-${y}`;
     }
 
-    // Crear objeto Asistencia
     const nueva = new Asistencia(
-      //this.nuevaAsistencia.titulo,
+      this.nuevaAsistencia.titulo,
       fecha,
       this.nuevaAsistencia.horaInicio,
       this.nuevaAsistencia.horaFin,
       this.nuevaAsistencia.descripcion,
       this.nuevaAsistencia.nombreLugar,
       this.nuevaAsistencia.direccion,
+      this.nuevaAsistencia.cantColaboradores,
       this.evento?.id || 0
     );
 
-    // Enviar al backend
     this.apiAsistencias.crearAsistencia(nueva).subscribe({
       next: (asistenciaCreada) => {
-        this.asistenciasFuturas.push(nueva);
         this.cerrarModalAsistencia();
+        if (this.evento) {
+          this.cargarAsistencias(this.evento.id);
+        }
       },
       error: (error: any) => {
         console.error('Error al crear asistencia', error);
         this.errorMsg = 'No se pudo crear la asistencia. Intenta nuevamente.';
       }
     });
+
+
+
+
   }
+
+
+
+
+
+
+
+
+  //Modal para mostrar el codigo que se le tiene que mostrar al colaborador
+  intervalId: any; // Propiedad para guardar el ID del setInterval
 
   abrirModalCodigo(asistencia: Asistencia) {
     this.asistenciaSeleccionada = asistencia;
-    this.codigoAsistencia = Math.random().toString(36).substring(2, 8).toUpperCase();
-    this.modalCodigoAbierto = true;
+
+    this.apiAsistencias.getCodigoPresentismo(asistencia.id!, asistencia.eventoId).subscribe({
+      next: (codigo) => {
+        this.codigoAsistencia = codigo;
+        this.modalCodigoAbierto = true;
+
+        // Iniciar verificación cada 5 segundos
+        this.intervalId = setInterval(() => {
+          if (this.codigoAsistencia && this.codigoAsistencia.codigo && this.asistenciaSeleccionada?.id != null) {
+            this.apiAsistencias.verificarCodigo(this.codigoAsistencia.codigo, this.asistenciaSeleccionada.id).subscribe({
+              next: (res) => {
+                console.log(res)
+                console.log(res.codigo)
+                localStorage.setItem("codigoAleatorio", JSON.stringify(res))
+                this.codigoAsistencia = res;
+              },
+              error: (err) => {
+                console.error('Error al verificar el código:', err);
+              }
+            });
+          }
+        }, 5000);
+      },
+      error: (err) => {
+        console.error('Error al obtener el código:', err);
+      }
+    });
   }
+
+
+
+
+
+
 
   cerrarModalCodigo() {
     this.modalCodigoAbierto = false;
-    this.codigoAsistencia = '';
+    this.codigoAsistencia = undefined!;
     this.asistenciaSeleccionada = null;
+
+    // Limpiar intervalo al cerrar
+    if (this.intervalId) {
+      clearInterval(this.intervalId);
+      this.intervalId = null;
+    }
   }
 
-  // Devuelve el tiempo restante en formato legible para una asistencia futura
-  getTiempoRestante(asistencia: Asistencia): string {
 
+
+
+
+
+
+  getTiempoRestante(asistencia: Asistencia): string {
     const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
     const [hora, minuto] = asistencia.horaInicio.split(':').map(Number);
     const inicio = new Date(anio, mes - 1, dia, hora, minuto);
@@ -208,9 +360,13 @@ export class EventoDetallePage implements OnInit {
     }
   }
 
-  // devuelve el tiempo restante para que termine la asistencia en curso
-  getTiempoRestanteEnCurso(asistencia: Asistencia): string {
 
+
+
+
+
+
+  getTiempoRestanteEnCurso(asistencia: Asistencia): string {
     const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
     const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
     const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
@@ -229,7 +385,12 @@ export class EventoDetallePage implements OnInit {
     }
   }
 
-  // Formatea fechas a dd-mm-aaaa y la hora a hh:mm mientras se escribe
+
+
+
+
+
+
   onFechaInput(event: any) {
     let value = event.target.value.replace(/[^0-9]/g, '');
     if (value.length > 2) value = value.slice(0, 2) + '-' + value.slice(2);
@@ -238,6 +399,11 @@ export class EventoDetallePage implements OnInit {
     this.nuevaAsistencia.fecha = value;
   }
 
+
+
+
+
+
   onHoraInput(event: any, field: 'horaInicio' | 'horaFin') {
     let value = event.target.value.replace(/[^0-9]/g, '');
     if (value.length > 2) value = value.slice(0, 2) + ':' + value.slice(2);
@@ -245,48 +411,24 @@ export class EventoDetallePage implements OnInit {
     this.nuevaAsistencia[field] = value;
   }
 
+
+
+
+
+
   actualizarEstadoAsistencias() {
-    const ahora = new Date();
-    this.asistenciasFuturas = this.asistenciasFuturas.filter(asistencia => {
+    if (this.evento) {
 
-      // Convertir fecha y horaInicio a objeto Date
-      const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
-      const [hora, minuto] = asistencia.horaInicio.split(':').map(Number);
-      const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
-      const inicio = new Date(anio, mes - 1, dia, hora, minuto);
-      const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
-
-      // Si ya esta en curso, mover a asistenciasEnCurso
-      if (ahora >= inicio && ahora <= fin) {
-        this.asistenciasEnCurso.push(asistencia);
-        return false; // quitar de fituras
-      }
-      // Si ya paso mover a asistenciasPasadas
-      if (ahora > fin) {
-        this.asistenciasPasadas.push(asistencia);
-        return false;
-      }
-      return true; // sigue siendo futura
-    });
-
-    this.asistenciasEnCurso = this.asistenciasEnCurso.filter(asistencia => {
-      const [dia, mes, anio] = asistencia.fecha.split('-').map(Number);
-      const [horaFin, minutoFin] = asistencia.horaFin.split(':').map(Number);
-      const fin = new Date(anio, mes - 1, dia, horaFin, minutoFin);
-
-      if (ahora > fin) {
-        this.asistenciasPasadas.push(asistencia);
-        return false;
-      }
-
-      return true;
-    });
-    // Eliminar si se repite EnCurso y Pasadas
-    this.asistenciasEnCurso = this.asistenciasEnCurso.filter((a, i, arr) =>
-      arr.findIndex(b => b.fecha === a.fecha && b.horaInicio === a.horaInicio) === i
-    );
-    this.asistenciasPasadas = this.asistenciasPasadas.filter((a, i, arr) =>
-      arr.findIndex(b => b.fecha === a.fecha && b.horaInicio === a.horaInicio) === i
-    );
+      this.cargarAsistencias(this.evento.id);
+    }
   }
+
+
+
+
+
+  volverAtras() {
+    this.location.back();
+  }
+
 }

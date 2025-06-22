@@ -9,7 +9,7 @@ const routes: Routes = [
   },
   {
     path: 'register',
-    loadChildren: () => import('./pages/auth/register/register.module').then( m => m.RegisterPageModule)
+    loadChildren: () => import('./pages/auth/register/register.module').then(m => m.RegisterPageModule)
   },
   {
     path: '',
@@ -23,12 +23,14 @@ const routes: Routes = [
   },
   {
     path: 'menu/materia-detalle',
-    loadChildren: () => import('./pages/home/evento-detalle/evento-detalle.module').then( m => m.EventoDetallePageModule),
+    loadChildren: () => import('./pages/home/evento-detalle/evento-detalle.module').then(m => m.EventoDetallePageModule),
     canActivate: [AuthGuard]
   },
   {
     path: 'menu/evento-suscripto',
-    loadChildren: () => import('./pages/home/evento-suscripto/evento-suscripto.module').then( m => m.EventoSuscriptoPageModule)
+    loadChildren: () => import('./pages/home/evento-suscripto/evento-suscripto.module').then(m => m.EventoSuscriptoPageModule),
+    canActivate: [AuthGuard]
+
   },
 
 

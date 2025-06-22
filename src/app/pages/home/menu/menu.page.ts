@@ -1,7 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { CargarMasDatosService } from 'src/app/services/cargar-mas-datos.service';
-import { ListaM } from 'src/app/models/lista.model';
 import { Evento } from 'src/app/models/evento.model';
 import { ApiEventosService } from 'src/app/services/api/apiEventos/api-eventos.service';
 import { firstValueFrom } from 'rxjs';
@@ -13,16 +12,15 @@ import { firstValueFrom } from 'rxjs';
   styleUrls: ['./menu.page.scss'],
 })
 export class MenuPage implements OnInit {
-  listaAsist: ListaM[] = [];
-  listaAsistCarga: Evento[] = [];
-  listaAsistDisponibles: ListaM[] = [];
+
+
+  listaMisEventosSuscriptos: Evento[] = []; //Variable para alar los eventos suscriptos que devuelve la api
   codigoInvitacion: string = '';
-  usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
-
-
-  modalAbierto: boolean = false;
+  usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}'); // Guardammos datos del usuario que inicio sesion
+  modalAbierto: boolean = false; //Variable para modal
+  //Creamos una variable para default del form
   eventoForm: Evento = {
-    id: undefined,
+    id: 0,
     nombre: '',
     descripcion: '',
     organizadorNombre: '',
@@ -38,28 +36,42 @@ export class MenuPage implements OnInit {
   eventoBuscado: Evento | null = null;
   yaSuscripto: boolean = false;
   cargandoEventos: boolean = false;
+  esMiEvento: boolean = false;
 
-  // Nuevo: usuario logueado
+
+  
 
   constructor(
     private router: Router,
-    private cargarMasDatos: CargarMasDatosService,
+    //private cargarMasDatos: CargarMasDatosService,
     private apiEventos: ApiEventosService,
-    private cdRef: ChangeDetectorRef
-
-
   ) { }
 
+
+
+
+
   ngOnInit() {
-    //this.listaAsist = JSON.parse(localStorage.getItem('listas') || '[]')
-    //this.cargaIniciadoraAsist()   //llama a una función para crear listas
-    this.listaAsistCarga.push(...this.cargarMasDatos.cargarInicial(this.listaAsist))    //carga 10 listas de todas las que tengo
-
     this.cargarEventosUsuarioDesdeApi();
+    this.cargarSuscripcionesUsuarioDesdeApi();
 
-    // Cargar materias desde localStorage y mapear a instancias de Materia
-    const eventosRaw = JSON.parse(localStorage.getItem('eventos') || '[]');
-    this.eventos = eventosRaw.map((e: any) => new Evento(
+    const eventosSuscriptos = JSON.parse(localStorage.getItem('suscripciones') || '[]');
+    this.listaMisEventosSuscriptos = eventosSuscriptos.map((e: any) => new Evento(
+      e.id,
+      e.nombre,
+      e.descripcion || '',
+      e.organizadorNombre || '',
+      e.organizadorApellido || '',
+      e.fechaCreacion || '',
+      e.codigoInvitacion || '',
+      e.creadorNombre || '',
+      e.creadorApellido || ''
+    ));
+
+    // Cargar Eventos desde localStorage y mapear a instancias de Eventos
+    const eventos = JSON.parse(localStorage.getItem('eventos') || '[]');
+    this.eventos = eventos.map((e: any) => new Evento(
+      e.id,
       e.nombre,
       e.descripcion,
       e.organizadorNombre,
@@ -83,120 +95,130 @@ export class MenuPage implements OnInit {
       return;
     }
 
-    // Al cargar eventos suscriptos desde storage, restaurar la descripción si existe
-    const eventosSuscriptosRaw = JSON.parse(localStorage.getItem('eventosSuscriptos') || '[]');
-    if (eventosSuscriptosRaw.length > 0) {
-      this.listaAsistCarga = eventosSuscriptosRaw.map((e: any) => {
-        const l = new ListaM(e.nombre, e.invitacion);
-        l.invitacion = e.invitacion;
-        (l as any).descripcion = e.descripcion || '';
-        (l as any).creadorNombre = e.creadorNombre || '';
-        return l;
+  }
+
+
+
+
+
+
+  // Busca los Eventos por código de invitación en todas las eventos guardadas
+  agregarListaPorCodigo() {
+    this.apiEventos.buscarEventoPorCodigoInvitacion(this.codigoInvitacion)
+      .subscribe({
+        next: (eventoEncontrado) => {
+          if (eventoEncontrado) {
+            this.eventoBuscado = new Evento(
+              eventoEncontrado.id,
+              eventoEncontrado.nombre,
+              eventoEncontrado.descripcion,
+              eventoEncontrado.organizadorNombre,
+              eventoEncontrado.organizadorApellido,
+              eventoEncontrado.fechaCreacion,
+              eventoEncontrado.codigoInvitacion,
+              eventoEncontrado.creadorNombre,
+              eventoEncontrado.creadorApellido
+            );
+
+            // Verificar si ya está suscripto
+            this.yaSuscripto = this.listaMisEventosSuscriptos.some(
+              e => e.codigoInvitacion === eventoEncontrado.codigoInvitacion
+            );
+
+            // Verificar si el evento pertenece al usuario (es su propio evento)
+            const miEvento = this.eventos.find(e =>
+              e.codigoInvitacion === this.eventoBuscado!.codigoInvitacion
+            );
+
+            this.esMiEvento = !!miEvento;
+          } else {
+            this.eventoBuscado = null;
+            this.yaSuscripto = false;
+            this.esMiEvento = false;
+          }
+        },
+        error: (err) => {
+          console.error('Error buscando evento por código:', err);
+          this.eventoBuscado = null;
+          this.yaSuscripto = false;
+          this.esMiEvento = false;
+        }
       });
+  }
+
+
+
+
+
+
+  buscarEventoPorCodigo() {
+    if (!this.codigoInvitacion) return;
+
+    this.apiEventos.buscarEventoPorCodigoInvitacion(this.codigoInvitacion).subscribe({
+      next: (evento) => {
+        this.eventoBuscado = evento;
+
+
+
+        // Verificar si ya está suscripto en la lista local
+        this.yaSuscripto = this.listaMisEventosSuscriptos.some(
+          e => e.codigoInvitacion.toString() === evento.codigoInvitacion.toString()
+        );
+      },
+      error: (error) => {
+        console.error('Error buscando evento:', error);
+        this.eventoBuscado = null;
+        this.yaSuscripto = false;
+      }
+    });
+  }
+
+
+
+
+
+  suscribirseAEvento() {
+    const codigoInvitacion = this.eventoBuscado?.codigoInvitacion;
+
+    if (!codigoInvitacion) {
+      console.warn("No hay código de invitación disponible.");
+      return;
     }
+
+    this.apiEventos.suscribirseAEvento(codigoInvitacion).subscribe({
+      next: (respuesta) => {
+        this.yaSuscripto = true;
+
+        if (!this.eventoBuscado) return;
+
+        this.listaMisEventosSuscriptos.push(this.eventoBuscado);
+
+        const suscripciones = JSON.parse(localStorage.getItem('suscripciones') || '[]');
+
+        const yaExiste = suscripciones.some((e: any) => e.id === this.eventoBuscado!.id);
+        if (!yaExiste) {
+          suscripciones.push(this.eventoBuscado);
+          localStorage.setItem('suscripciones', JSON.stringify(suscripciones));
+        }
+
+        console.log('Suscripción agregada correctamente.');
+      },
+      error: (error) => {
+        console.error("Error al suscribirse:", error);
+      }
+    });
   }
 
 
-  //carga mas de las listas que tengo (carga de a 10)
-  cargarMasListas() {
-    const carga = this.cargarMasDatos.cargarMas(this.listaAsist, this.listaAsistCarga);
-    this.listaAsistCarga.push(...carga);
-  }
 
-  //te lleva a una página donde estará todo el detalle de la lista
-  detalle(id: any, lista: ListaM[]) {
-    let detalle = lista.filter(item => item.nombre === id)
-    localStorage.setItem('detalle', JSON.stringify(detalle))
-    this.router.navigate(['/evento-suscripto', id]);
-  }
 
-  //elimina una lista de lo que está cargado, de todas las que tenes y actualiza el localstorage
-  //recordad de cambiar el nombre por id cuando se complete el proyecto
-  eliminar(idFav: any, lista: ListaM[]) {
 
-    let listaActualizada = lista.filter(item => item.nombre !== idFav);
-    // Convert ListaM objects to Evento objects before assigning
-    this.listaAsistCarga = listaActualizada.slice(0, this.listaAsistCarga.length).map((item: any) =>
-      new Evento(
-        item.nombre,
-        item.descripcion || '',
-        item.organizadorNombre || '',
-        item.organizadorApellido || '',
-        item.fechaCreacion || '',
-        item.codigoInvitacion || item.invitacion || '',
-        item.creadorNombre || '',
-        item.creadorApellido || ''
-      )
-    );
-    this.listaAsist = listaActualizada;
-
-    localStorage.setItem('listas', JSON.stringify(listaActualizada));
-    // Permitir volver a suscribirse si se elimina de la lista suscripta
-    this.yaSuscripto = false;
-  }
-
-  // Busca la materia por código de invitación en todas las materias guardadas
-  async agregarListaPorCodigo() {
-
-    const eventosRaw = JSON.parse(localStorage.getItem('eventos') || '[]');
-    const eventoEncontrado = eventosRaw.find((e: any) => e.invitacion == this.codigoInvitacion);
-
-    if (eventoEncontrado) {
-      this.eventoBuscado = new Evento(
-        eventoEncontrado.nombre,
-        eventoEncontrado.creadorId,
-        eventoEncontrado.descripcion,
-        eventoEncontrado.organizadorNombre,
-        eventoEncontrado.organizadorApellido,
-        eventoEncontrado.puntuacion,
-        eventoEncontrado.fechaCreacion,
-        eventoEncontrado.invitacion
-      );
-
-      // Verificar si ya está suscripto (solo si sigue en la lista)
-      this.yaSuscripto = this.listaAsistCarga.some(e => e.codigoInvitacion == eventoEncontrado.codigoInvitacion);
-    } else {
-      this.eventoBuscado = null;
-      this.yaSuscripto = false;
-    }
-  }
-
-  // Suscribirse a la materia encontrada
-  /*suscribirseAEvento() {
-    if (this.eventoBuscado && !this.yaSuscripto) {
-      const invitacion = Number(this.eventoBuscado.codigoInvitacion) || Date.now();
-      const listaSuscripta = new ListaM(
-        this.eventoBuscado.nombre,
-        invitacion
-      );
-      listaSuscripta.invitacion = invitacion;
-      // Agregar descripción al objeto ListaM para mostrarla en la lista
-      (listaSuscripta as any).descripcion = this.eventoBuscado.descripcion || '';
-      // Guardar el nombre del creador del evento
-      (listaSuscripta as any).creadorNombre = this.eventoBuscado.organizadorNombre || '';
-      this.listaAsistCarga.push(listaSuscripta);
-      localStorage.setItem('eventosSuscriptos', JSON.stringify(this.listaAsistCarga));
-      this.yaSuscripto = true;
-      // Asegura que al suscribirse también se guarde el eventoDetalle correctamente
-      localStorage.setItem('eventoDetalle', JSON.stringify(this.eventoBuscado));
-      this.eventoBuscado = null;
-      this.codigoInvitacion = '';
-    }
-  }*/
-
-  // Lógica para crear una clase nueva (puedes personalizar los datos)
-  /*crearClaseNueva() {
-    const nuevaClase = new ListaM('Clase nueva ' + (this.listaAsist.length + 1), Date.now());
-    this.listaAsist.push(nuevaClase);
-    this.listaAsistCarga.push(nuevaClase);
-    localStorage.setItem('listas', JSON.stringify(this.listaAsist));
-  }*/
 
   // Modal de eventos para crear
   abrirModal() {
     const usuarioLogueado = this.usuarioLogueado;
     this.eventoForm = {
-      id: undefined,
+      id: 0 as 1,
       nombre: '',
       descripcion: '',
       organizadorNombre: '',
@@ -209,45 +231,43 @@ export class MenuPage implements OnInit {
     this.modalAbierto = true;
   }
 
+
+
+
+
+
   cerrarModal() {
     this.modalAbierto = false;
   }
 
-  // Guarda una nueva materia creada por el usuario logueado
-  // (Eliminada implementación duplicada de guardaEvento)
 
+
+
+
+  // Guarda el evento seleccionado en localStorage y navega a la página de detalle Es
   detalleEvento(evento: Evento) {
-    // Guarda la materia seleccionada en localStorage y navega a la página de detalle
-
     localStorage.setItem('eventoDetalle', JSON.stringify(evento));
     this.router.navigate(['menu/materia-detalle']);
-
   }
 
-  /*cargarEventosUsuario() {
-    this.apiEventos.verMisEventos().subscribe(
-      (eventos: any) => {
-        console.log('Eventos cargados:', eventos);
-        this.eventos = eventos;
-  
-        // Guardar en localStorage como string
-        localStorage.setItem('eventos', JSON.stringify(eventos));
-  
-        this.cargandoEventos = true;
-      },
-      (err: any) => {
-        this.cargandoEventos = false;
-        console.error('Error al cargar eventos del usuario', err);
-      }
-    );
-  }*/
+
+
+
+
+
+  detalleSuscripto(evento: Evento) {
+    localStorage.setItem('suscripcionDetalle', JSON.stringify(evento));
+    this.router.navigate(['menu/evento-suscripto']);
+  }
+
+
+
+
+
   cargarEventosUsuarioDesdeApi() {
     this.apiEventos.verMisEventos().subscribe({
       next: (data: Evento[]) => {
         console.log(data);
-
-
-
         // Convertir la respuesta en instancias de Evento
         const eventosConvertidos: Evento[] = data.map(e => new Evento(
           e.id,
@@ -262,12 +282,6 @@ export class MenuPage implements OnInit {
         ));
 
         this.eventos = eventosConvertidos;
-        this.eventos.forEach(e => {
-          console.log("Evento: " + e.toString())
-        });
-        eventosConvertidos.forEach(e => {
-          console.log("Evento convertido: " + e.toString())
-        });
 
         // Guardar en localStorage
         localStorage.setItem('eventos', JSON.stringify(eventosConvertidos));
@@ -280,6 +294,46 @@ export class MenuPage implements OnInit {
       }
     });
   }
+
+
+
+
+
+
+  cargarSuscripcionesUsuarioDesdeApi() {
+
+    this.apiEventos.misSuscripcionesDeEventos().subscribe({
+      next: (data: Evento[]) => {
+        console.log(data);
+        // Convertir la respuesta en instancias de Evento
+        const eventosConvertidos: Evento[] = data.map(e => new Evento(
+          e.id,
+          e.nombre,
+          e.descripcion,
+          e.organizadorNombre,
+          e.organizadorApellido,
+          e.fechaCreacion,
+          e.codigoInvitacion,
+          e.creadorNombre,
+          e.creadorApellido
+        ));
+
+        this.listaMisEventosSuscriptos = eventosConvertidos;
+
+        // Guardar en localStorage
+        localStorage.setItem('suscripciones', JSON.stringify(eventosConvertidos));
+
+        this.cargandoEventos = false;
+      },
+      error: (err: any) => {
+        this.cargandoEventos = false;
+        console.error('Error al cargar eventos del usuario', err);
+      }
+    });
+  }
+
+
+
 
 
   async guardaEvento() {
@@ -299,26 +353,10 @@ export class MenuPage implements OnInit {
   }
 
 
-  /*async eliminarEvento(evento: Evento) {
-    if (evento.id !== undefined) {
-      this.apiEventos.borrarEvento(evento.id).subscribe({
-        next: () => {
-          this.eventos = this.eventos.filter(e => e.codigoInvitacion !== evento.codigoInvitacion);
-          localStorage.setItem('eventos', JSON.stringify(this.eventos));
 
-          if (this.eventoBuscado && this.eventoBuscado.codigoInvitacion === evento.codigoInvitacion) {
-            this.eventoBuscado = null;
-            this.yaSuscripto = false;
-          }
-        },
-        error: (error) => {
-          console.error('Error al borrar evento en la API', error);
-        }
-      });
-    } else {
-      console.error('El evento no tiene un código de invitación válido.');
-    }
-  }*/
+
+
+
   async eliminarEvento(evento: Evento) {
     if (evento.id !== undefined) {
       this.apiEventos.borrarEvento(evento.id).subscribe({
@@ -344,6 +382,39 @@ export class MenuPage implements OnInit {
       });
     } else {
       console.error('El evento no tiene un código de invitación válido.');
+    }
+  }
+
+
+
+
+
+
+  desuscribirseDeEvento(idEvento: number) {
+    this.apiEventos.desuscribirseAEvento(idEvento).subscribe({
+      next: () => {
+        this.listaMisEventosSuscriptos = this.listaMisEventosSuscriptos.filter(
+          evento => evento.id !== idEvento
+        );
+      },
+      error: (err) => {
+        console.error('Error al desuscribirse:', err);
+      }
+    });
+  }
+
+
+
+
+
+  copiado = false;
+  async copiarCodigo(codigo: String) {
+    try {
+      await navigator.clipboard.writeText(codigo.toString());
+      this.copiado = true;
+      setTimeout(() => this.copiado = false, 2000); // vuelve al icono original después de 2 seg
+    } catch (err) {
+      console.error('Error al copiar:', err);
     }
   }
 

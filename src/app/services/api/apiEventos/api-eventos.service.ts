@@ -8,9 +8,11 @@ import { Evento } from 'src/app/models/evento.model';
 })
 export class ApiEventosService {
 
+  private baseUrl = 'https://app-asistencias-backend-qa38.onrender.com';
+  token = localStorage.getItem('token') || '';
+
   constructor(private http: HttpClient) { }
 
-  token = localStorage.getItem('token') || '';
 
 
   crearEvento(evento: any) {
@@ -19,8 +21,10 @@ export class ApiEventosService {
     const headers = new HttpHeaders()
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json');
-    return this.http.post('http://localhost:8080/api/eventos', evento, { headers });
+    return this.http.post(`${this.baseUrl}/api/eventos`, evento, { headers });
   }
+
+
 
   borrarEvento(id: string | number) {
     const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
@@ -28,10 +32,12 @@ export class ApiEventosService {
     const headers = new HttpHeaders()
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json');
-    return this.http.delete(`http://localhost:8080/api/eventos/${id}`, { headers });
+    return this.http.delete(`${this.baseUrl}/api/eventos/${id}`, { headers });
   }
 
-  verMisEventos() : Observable<Evento[]> {
+
+
+  verMisEventos(): Observable<Evento[]> {
     const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
     const token = usuarioLogueado.token || '';
     const id = usuarioLogueado.idUsuario;
@@ -41,7 +47,61 @@ export class ApiEventosService {
     const headers = new HttpHeaders()
       .set('Authorization', `Bearer ${token}`)
       .set('Content-Type', 'application/json');
-    return this.http.get<Evento[]>(`http://localhost:8080/api/eventos/usuario/${id}`, { headers });
+    return this.http.get<Evento[]>(`${this.baseUrl}/api/eventos/usuario/${id}`, { headers });
   }
+
+
+
+  buscarEventoPorCodigoInvitacion(codigoDeInvitacion: string): Observable<Evento> {
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
+    const token = usuarioLogueado.token || '';
+    const headers = new HttpHeaders()
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json');
+    return this.http.get<Evento>(`${this.baseUrl}/api/eventos/codigo/${codigoDeInvitacion}`, { headers });
+  }
+
+
+
+  suscribirseAEvento(codigoInvitacion: String) {
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
+    const token = usuarioLogueado.token || '';
+
+    const headers = new HttpHeaders()
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json');
+
+    const body = { codigoInvitacion };
+
+    return this.http.post<Evento>(`${this.baseUrl}/api/suscripcion`, body, { headers });
+  }
+
+
+
+  misSuscripcionesDeEventos(): Observable<Array<Evento>> {
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
+    const token = usuarioLogueado.token || '';
+
+    const headers = new HttpHeaders()
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json');
+
+    return this.http.get<Array<Evento>>(`${this.baseUrl}/api/suscripcion`, { headers });
+  }
+
+
+
+  desuscribirseAEvento(idEvento: number): Observable<Array<Evento>> {
+    const usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}');
+    const token = usuarioLogueado.token || '';
+
+    const headers = new HttpHeaders()
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json');
+
+    return this.http.delete<Array<Evento>>(`${this.baseUrl}/api/suscripcion/${idEvento}`, { headers });
+  }
+
+
 }
 

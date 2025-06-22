@@ -6,7 +6,10 @@ import { Injectable } from '@angular/core';
 })
 export class ApiAuthService {
 
+  private baseUrl = 'https://app-asistencias-backend-qa38.onrender.com';
+
   constructor(private http: HttpClient) { }
+
 
 
   registerApi(user: {
@@ -29,8 +32,11 @@ export class ApiAuthService {
       'genero': user.genero
     };
     console.log(dataForm)
-    return this.http.post('http://localhost:8080/api/users/auth/register', dataForm);
+    return this.http.post(`${this.baseUrl}/api/users/auth/register`, dataForm);
   }
+
+
+
 
   loginApi(email: string, contrasenia: string) {
     const dataForm = {
@@ -38,7 +44,9 @@ export class ApiAuthService {
       contrasenia: contrasenia
     };
     const headers = { 'Content-Type': 'application/json' };
-    return this.http.post('http://localhost:8080/api/users/auth/login', dataForm, { headers });
+    return this.http.post(`${this.baseUrl}/api/users/auth/login`, dataForm, { headers });
   }
+
+
 
 }

@@ -6,8 +6,8 @@ export class ListaM {
     nombre: string;
     creador: UsuarioM = new UsuarioM('valentin','ojeda','123@gmail.com','00 0000 0000')
     miembros: UsuarioM[] = [];
-    descripcion?: string; // Nueva propiedad explícita
-    creadorNombre?: string; // Nueva propiedad explícita
+    descripcion?: string; 
+    creadorNombre?: string; 
 
 
     constructor(nombre: string, i: number, /*creador: UsuarioM*/) {
