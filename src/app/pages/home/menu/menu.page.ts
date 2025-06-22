@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { CargarMasDatosService } from 'src/app/services/cargar-mas-datos.service';
 import { Evento } from 'src/app/models/evento.model';
 import { ApiEventosService } from 'src/app/services/api/apiEventos/api-eventos.service';
 import { firstValueFrom } from 'rxjs';

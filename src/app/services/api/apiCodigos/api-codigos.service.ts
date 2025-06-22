@@ -1,7 +1,6 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Asistencia } from 'src/app/models/asistencia.model';
 import { CodigoAsistencia } from 'src/app/models/codigoAsistencia';
 
 @Injectable({

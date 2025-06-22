@@ -20,7 +20,7 @@ export class Asistencia {
     direccion: string,
     cantColaboradores: number,
     eventoId: number,
-    id?: number // lo agregamos como último parámetro opcional
+    id?: number 
   ) {
     this.titulo = titulo;
     this.fecha = fecha;

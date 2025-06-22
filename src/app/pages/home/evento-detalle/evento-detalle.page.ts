@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Evento } from 'src/app/models/evento.model';
 import { Asistencia } from 'src/app/models/asistencia.model';
 import { Location } from '@angular/common';
