@@ -30,12 +30,14 @@
 #container a {
   text-decoration: none;
 }
+
 //barra de arriba
 .barra_navegadora{
   display: flex;
   justify-content: space-between;
   margin: 0 10px;
 }
+
 .button a{
   text-decoration: none;
   background-color: gray;
@@ -47,6 +49,19 @@
   
   
 }
+
 .button:active{
   background-color: #2e7d32;
+}
+
+.alto {
+  background-color: #06b9a7;
+}
+
+ion-tab-button, ion-label {
+  background-color: transparent;
+}
+
+* {
+  color: rgb(46, 46, 46)
 }

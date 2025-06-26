@@ -1,12 +1,9 @@
 <ion-content [fullscreen]="true">
 
-
-
-
-  <ion-header [translucent]="true">
+  <ion-header class="centrado">
     <ion-toolbar>
       <ion-input [(ngModel)]="codigoInvitacion" placeholder="Ingrese código de invitación"></ion-input>
-      <ion-button (click)="agregarListaPorCodigo()">Buscar evento</ion-button>
+      <ion-button class="boton" (click)="agregarListaPorCodigo()">Buscar evento</ion-button>
     </ion-toolbar>
   </ion-header>
 
@@ -83,6 +80,7 @@
     <ion-card-header>
       <ion-card-title>Mis Eventos</ion-card-title>
     </ion-card-header>
+
     <ion-card-content class="contenedor-scroll">
       <p *ngIf="eventos.length === 0">No hay eventos creados.</p>
       <ion-list>
