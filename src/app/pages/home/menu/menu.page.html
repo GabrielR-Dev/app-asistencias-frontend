@@ -109,8 +109,8 @@
 
 
   <!-- Boton abrir el modal para crear un evento -->
-  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
-    <ion-fab-button color="primary" (click)="abrirModal()">
+  <ion-fab  vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button class="boton2" (click)="abrirModal()">
       <ion-icon name="add"></ion-icon>
     </ion-fab-button>
   </ion-fab>
@@ -145,7 +145,7 @@
           <ion-input [(ngModel)]="eventoForm.descripcion"></ion-input>
         </ion-item>
 
-        <ion-button expand="block" (click)="guardaEvento()">Guardar</ion-button>
+        <ion-button class="boton" expand="block" (click)="guardaEvento()">Guardar</ion-button>
       </ion-content>
     </ng-template>
   </ion-modal>
