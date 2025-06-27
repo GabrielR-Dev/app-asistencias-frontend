@@ -30,12 +30,12 @@
 
 
   <!-- For para array de Asistencias Futuras -->
-  <ion-list>
+  <ion-list class="centrado">
 
 
 
-    <ion-list-header>Asistencias asociadas</ion-list-header>
-    <ion-item *ngFor="let asistencia of asistenciasFuturas">
+    <ion-list-header><h2>Asistencias asociadas</h2></ion-list-header>
+    <ion-item class="centrado2" *ngFor="let asistencia of asistenciasFuturas">
       <ion-label class="ion-text-wrap">
         <h2>{{asistencia.titulo}}</h2>
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
@@ -43,7 +43,7 @@
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
         <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
-        <p style="color: #3880ff; font-weight: bold;">
+        <p style="color: #06b9a7; font-weight: bold;">
           {{ getTiempoRestante(asistencia) }}
         </p>
       </ion-label>
@@ -90,7 +90,7 @@
 
 
 
-  <ion-button expand="block" color="primary" (click)="abrirModalAsistencia()">
+  <ion-button class="boton" expand="block" (click)="abrirModalAsistencia()">
     Agregar asistencia futura
   </ion-button>
 
@@ -98,12 +98,12 @@
 
 
   <!-- Vista del modal para agregar asisitencias -->
-  <ion-modal [isOpen]="modalAsistenciaAbierto" (didDismiss)="cerrarModalAsistencia()">
+  <ion-modal  [isOpen]="modalAsistenciaAbierto" (didDismiss)="cerrarModalAsistencia()">
 
     <ng-template>
 
       <ion-header>
-        <ion-toolbar>
+        <ion-toolbar  class="boton">
           <ion-title>Agregar asistencia futura</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarModalAsistencia()">
@@ -114,7 +114,7 @@
       </ion-header>
 
 
-      <ion-content class="ion-padding">
+      <ion-content class="modal">
 
         <ion-item>
           <ion-label position="floating">Titulo</ion-label>
@@ -159,7 +159,7 @@
           <ion-input [(ngModel)]="nuevaAsistencia.cantColaboradores" type="number"></ion-input>
         </ion-item>
 
-        <ion-button expand="block" color="success" (click)="agregarAsistenciaFutura()">Agregar</ion-button>
+        <ion-button class="boton" expand="block" (click)="agregarAsistenciaFutura()">Agregar</ion-button>
         <div *ngIf="errorMsg" style="color: red; margin-top: 16px; text-align: center;">
           {{ errorMsg }}
         </div>

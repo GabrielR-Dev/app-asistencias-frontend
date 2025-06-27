@@ -8,3 +8,25 @@ input[type=number]::-webkit-inner-spin-button {
 input[type=number] {
   -moz-appearance: textfield;
 }
+
+.centrado {
+  padding-bottom: 0.5%;
+  padding-top: 4%;
+}
+
+.centrado2 {
+  padding-left: 1%;
+  padding-bottom: 0.5%;
+  padding-top: 0.25%;
+  --background: #d9d9d9;
+  background-color: transparent;
+}
+
+.boton {
+  --background: #06b9a7;
+}
+
+ion-item {
+  --background: #d9d9d9;
+  background-color: transparent;
+}
