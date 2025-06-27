@@ -44,3 +44,29 @@ ion-card, ion-card-content, ion-list, ion-item, ion-label {
 .barra {
     background-color: #06b9a7;
 }
+
+img {
+    width: 100%;
+    max-width: 75px;
+    border-radius: 10px;
+}
+
+.divHeader {
+    display: flex;
+    align-items: center;
+    background-color: #06b9a7;
+    font-size: 32px;
+    font-weight: bold;
+    padding-left: 1%;
+}
+
+.titleLogo {
+    width: 100%;
+    height: 100%;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+.padeando {
+  padding-left: 0.5%
+}
