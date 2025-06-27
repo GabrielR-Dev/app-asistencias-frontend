@@ -1,0 +1,43 @@
+.contenedor_perfil {
+  margin-top: 40px;
+  display: flex;
+  justify-content: space-between;
+  margin: 40px auto 0 auto;
+  max-width: 410px;
+  
+}
+
+.imagen_perfil {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid black;
+  cursor: pointer;
+  transition: transform 0.3s;
+  margin: auto;
+}
+
+.contenedorBienvenidaUsuario{
+    margin-left: 50px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.contenedorBienvenida,.contenedorUsuario p{
+    font-size: 25px;
+}
+
+.imagen_perfil:hover {
+  transform: scale(1.05);
+}
+.contenedorDatos{
+  
+  margin: 0 auto 0 auto;
+  max-width: 440px;
+  padding: 20px;
+}
+.card{
+  max-width: 540px;
+  margin: 0 auto;;
+}

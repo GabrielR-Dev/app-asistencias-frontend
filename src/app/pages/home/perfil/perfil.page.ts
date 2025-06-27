@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ViewChild, ElementRef } from '@angular/core';
+
 
 @Component({
   selector: 'app-perfil',
@@ -6,11 +7,29 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./perfil.page.scss'],
   standalone: false
 })
-export class PerfilPage implements OnInit {
+export class PerfilPage  {
 
-  constructor() { }
+  usuarioLogueado = JSON.parse(localStorage.getItem('usuarioLogueado') || '{}'); // Guardammos datos del usuario que inicio sesion
+  
 
-  ngOnInit() {
+  seleccionarImagen: string | ArrayBuffer | null = null;
+  @ViewChild('fileInput', { static: false }) fileInput!: ElementRef;
+
+  cambiarFoto() {
+    this.fileInput.nativeElement.click();
   }
+
+  imagenElegida(event: any) {
+    const archivo = event.target.files[0];
+    if (!archivo) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.seleccionarImagen = reader.result;
+    };
+    reader.readAsDataURL(archivo);
+  }
+ 
+  
 
 }
