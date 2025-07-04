@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "shell",
+			"label": "Generar page config",
+			"command": "npx ng generate page pages/config",
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

@@ -1,0 +1,73 @@
+<ion-content class="ion-padding login-content">
+
+  <div class="login-container">
+
+    <div class="avatar">
+      <img src="../../assets/icon/avatar.png" alt="Icono_Persona">
+    </div>
+
+    <div class="formulario">
+      <!-- NOMBRE  -->
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_usuario.png" alt="nombre_icon">
+        <ion-input placeholder="Nombre..." [(ngModel)]="nombre" type="text" name="Nombre"></ion-input>
+      </ion-item>
+      <!-- APELLIDO -->
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_usuario.png" alt="apellido_icon">
+        <ion-input placeholder="Apellido..." [(ngModel)]="apellido" type="text" name="apellido"></ion-input>
+      </ion-item>
+      <!-- CORREO ELECTRONICO -->
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_gmail.png" alt="usuario_icon">
+        <ion-input placeholder="Correo electrónico" [(ngModel)]="email" type="email" name="usuario"></ion-input>
+      </ion-item>
+      <!-- NOMBRE DE USUARIO -->
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_usuario.png" alt="usuario_icon">
+        <ion-input placeholder="Nombre de usuario" [(ngModel)]="nombreUsuario" type="text"
+          name="nombreUsuario"></ion-input>
+      </ion-item>
+      <!-- EDAD DEL USUARIO -->
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_usuario.png" alt="edad_icon">
+        <ion-input placeholder="Edad" [(ngModel)]="edad" type="number" name="edad" min="0"></ion-input>
+      </ion-item>
+      <!-- GÉNERO DEL USUARIO -->
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_usuario.png" alt="genero_icon">
+        <ion-select placeholder="Género" [(ngModel)]="genero" name="genero">
+          <ion-select-option value="masculino">Masculino</ion-select-option>
+          <ion-select-option value="femenino">Femenino</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <!-- CONTRASEÑA -->
+
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_candado.png" alt="icono_candado">
+        <ion-input placeholder="Contraseña" [(ngModel)]="password" type="password" name="password" required></ion-input>
+        
+      </ion-item>
+
+      <!-- VERIFICAR CONTRASEÑA -->
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_candado.png" alt="icono_candado">
+        <ion-input placeholder="Verificar contraseña" [(ngModel)]="confirmPassword" type="password"
+          name="confirmPassword" required>
+        </ion-input>
+      </ion-item>
+      <a class="texto_tener_login" href="/login">
+        <p>¿Ya tienes una cuenta? ¡Inicia sesion!</p>
+      </a>
+      <!-- BOTON REGISTRAR -->
+      <ion-button expand="full" (click)="register()" class="ion-margin-top login-button">Registrarse</ion-button>
+
+      <ion-text color="danger" *ngIf="errorMessage">
+        <p>{{ errorMessage }}</p>
+      </ion-text>
+
+    </div>
+
+  </div>
+
+</ion-content>

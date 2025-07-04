@@ -1,0 +1,60 @@
+.contenedor-scroll {
+  max-height: 50vh;
+  /* px para un valor determinado / vh para que sea adaptativo */
+  overflow-y: auto;
+}
+
+.contenedor-card {
+  width: 95%;
+  max-width: 800px;
+  margin: 50px auto;
+  margin-bottom: 75px;
+}
+
+.item-titulo {
+  font-weight: bold;
+  font-size: 16px;
+  max-width: 80%;
+}
+
+.comentario-detalle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 80%;
+}
+
+.acciones {
+  display: flex;
+  gap: 4px;
+}
+
+ion-fab[vertical="bottom"][horizontal="end"] {
+  position: fixed !important;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+ion-list, ion-header {
+  background-color: #d9d9d9 !important;
+  
+}
+
+.centrado {
+  padding-left: 1%;
+  padding-bottom: 0.5%;
+  padding-top: 0.25%;
+}
+
+ion-item, ion-toolbar{
+  --background: transparent;
+}
+
+.boton {
+    --background: #06b9a7;
+}
+
+.boton2 {
+    --background: #06b9a7;
+}

@@ -1,0 +1,42 @@
+<ion-content class=" ion-padding  login-content">
+
+  <div class="login-container">
+
+    <div class="avatar">
+      <img src="../../assets/icon/avatar.png" alt="Icono_Persona">
+    </div>
+
+    <div class="formulario">
+
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_usuario.png" alt="usuario_icon">
+        <ion-input placeholder="Usuario" [(ngModel)]="email" type="email" name="email" required></ion-input>
+      </ion-item>
+
+      <ion-item class="orden_input">
+        <img src="../../assets/icon/icono_candado.png" alt="icono_candado">
+        <ion-input [type]="mostrarPassword ? 'text' : 'password'" placeholder="Password" [(ngModel)]="password"
+          type="password" name="password" required></ion-input>
+        <button type="button" class="ojo" (click)="ocultarContra()">
+          <img class="ojo_ocultar" src="../../assets/icon/icono_ocultar.png" alt="ojo_ocultar">
+        </button>
+      </ion-item>
+
+      <a class="texto_olvidar_contra" href="#" style="margin-bottom: 5px;">
+        <p>¿Olvidaste la contraseña?</p>
+      </a>
+      <a class="texto_olvidar_contra" href="/register">
+        <p>¿No tienes una cuenta aun? ¡Registrate!</p>
+      </a>
+      <ion-button expand="full" (click)="login()" class="ion-margin-top login-button">Iniciar sesion</ion-button>
+
+      <ion-text color="danger" *ngIf="errorMessage">
+        <p class="ion-padding">{{ errorMessage }}</p>
+      </ion-text>
+
+
+    </div>
+
+  </div>
+
+</ion-content>
