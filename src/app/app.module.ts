@@ -22,7 +22,7 @@ import { HttpClientModule } from '@angular/common/http';
     IonicModule.forRoot(), 
     AppRoutingModule,
     FormsModule,
-    AngularFireModule.initializeApp(environment.firebaseConfig),
+
     AngularFireAuthModule,
     CommonModule,
     HttpClientModule

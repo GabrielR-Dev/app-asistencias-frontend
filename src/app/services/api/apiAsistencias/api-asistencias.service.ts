@@ -5,6 +5,9 @@ import { Asistencia } from 'src/app/models/asistencia.model';
 import { CodigoAsistencia } from 'src/app/models/codigoAsistencia';
 import { Presentismo } from 'src/app/models/presentismo.model';
 
+import { UsuarioM } from 'src/app/models/usuario.model';
+import { UsuarioPresente } from 'src/app/models/usuarioPresente.model';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -70,4 +73,20 @@ verificarCodigo(codigoAsistencia: string, idAsistencia: number): Observable<Codi
     headers.set("codigoAsistencia", codigo)
     return this.http.get<CodigoAsistencia>(`${this.baseUrl}/presentismos/random/evento/${eventoId}/asistencia/${asistenciaId}`, { headers });
   }*/
+
+
+verPresentes(idAsistencia: number): Observable<UsuarioPresente[]> {
+    const headers = this.getHeaders();
+    return this.http.get<UsuarioPresente[]>(`${this.baseUrl}/api/presentismos/${idAsistencia}`, { headers })
+      .pipe(
+        catchError(err => {
+          console.error('Error al obtener asistencias:', err);
+          return throwError(() => new Error('No se pudo obtener los presentismos'));
+        })
+      );
+  } 
+
+
+
 }
+

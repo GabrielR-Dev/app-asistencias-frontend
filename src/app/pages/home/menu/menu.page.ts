@@ -103,7 +103,8 @@ export class MenuPage implements OnInit {
 
   // Busca los Eventos por código de invitación en todas las eventos guardadas
   agregarListaPorCodigo() {
-    this.apiEventos.buscarEventoPorCodigoInvitacion(this.codigoInvitacion)
+
+    this.apiEventos.buscarEventoPorCodigoInvitacion(this.codigoInvitacion.toUpperCase())
       .subscribe({
         next: (eventoEncontrado) => {
           if (eventoEncontrado) {

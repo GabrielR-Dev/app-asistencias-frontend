@@ -32,7 +32,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
 
   },
-
+ {
+    
+    path: 'participantes/:id', 
+    loadChildren: () => import('./pages/presentes/presentes.module').then( m => m.PresentesPageModule)
+  },
 
 ];
 

@@ -1,9 +1,11 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
-  appName: 'AppAsistenciasModuls',
-  webDir: 'www'
+
+  appId: 'com.asapp.asistencias',
+  appName: 'Asapp',
+  webDir: 'www',
+
 };
 
 export default config;

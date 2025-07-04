@@ -1,0 +1,24 @@
+<ion-header [translucent]="true">
+  <ion-toolbar class="toolbar">
+     <ion-buttons slot="start">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+    <ion-title class="title">Presentes</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true">
+
+<ion-card *ngFor="let usuario of listaPresentes" lines="full">
+  <ion-card-header>
+    
+        <ion-card-title> {{ usuario.nombre }} {{ usuario.apellido }}</ion-card-title>
+        <ion-card-subtitle> {{ usuario.email }}</ion-card-subtitle>
+  
+      </ion-card-header>
+</ion-card>
+
+ 
+
+</ion-content>

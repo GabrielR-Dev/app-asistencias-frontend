@@ -6,6 +6,7 @@ import { ApiAsistenciasService } from 'src/app/services/api/apiAsistencias/api-a
 import { CodigoAsistencia } from 'src/app/models/codigoAsistencia';
 import { ApiCodigosService } from 'src/app/services/api/apiCodigos/api-codigos.service';
 
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-evento-detalle',
   templateUrl: './evento-detalle.page.html',
@@ -30,7 +31,9 @@ export class EventoDetallePage implements OnInit {
   constructor(
     private location: Location,
     private apiAsistencias: ApiAsistenciasService,
-    private apiCodigo: ApiCodigosService
+
+    private apiCodigo: ApiCodigosService,
+    private router:Router
   ) { }
 
 
@@ -429,6 +432,21 @@ export class EventoDetallePage implements OnInit {
 
   volverAtras() {
     this.location.back();
+  }
+
+verPresentes(asistencia: Asistencia) {
+   
+    const idAsistencia = asistencia.id;
+    if (!idAsistencia) {
+      console.error("Esta asistencia no tiene un ID válido.");
+      return;
+    }
+
+    console.log(`Navegando a los participantes de la asistencia con ID: ${idAsistencia}`);
+
+   
+    this.router.navigate(['/participantes', idAsistencia]);
+
   }
 
 }

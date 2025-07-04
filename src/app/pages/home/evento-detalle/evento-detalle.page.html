@@ -10,6 +10,7 @@
 </ion-header>
 
 <ion-header>
+
   <ion-toolbar>
     <ion-title>Detalle del Evento</ion-title>
     <ion-buttons slot="start">
@@ -41,12 +42,13 @@
 
 
   <!-- For para array de Asistencias Futuras -->
-  <ion-list class="centrado">
+
+  <ion-list>
 
 
 
-    <ion-list-header><h2>Asistencias asociadas</h2></ion-list-header>
-    <ion-item class="centrado2" *ngFor="let asistencia of asistenciasFuturas">
+    <ion-list-header>Asistencias asociadas</ion-list-header>
+    <ion-item *ngFor="let asistencia of asistenciasFuturas">
       <ion-label class="ion-text-wrap">
         <h2>{{asistencia.titulo}}</h2>
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
@@ -54,10 +56,12 @@
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
         <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
-        <p style="color: #06b9a7; font-weight: bold;">
+        <p style="color: #3880ff; font-weight: bold;">
           {{ getTiempoRestante(asistencia) }}
         </p>
+
       </ion-label>
+
     </ion-item>
 
 
@@ -83,38 +87,48 @@
 
 
 
-    <!-- For para array de Asistencias pasadas -->
-    <ion-item *ngFor="let asistencia of asistenciasPasadas">
-      <ion-label class="ion-text-wrap">
-        <h2>{{asistencia.titulo}} (Pasada)</h2>
+
+    <ion-card *ngFor="let asistencia of asistenciasPasadas">
+      <ion-card-header>
+        <ion-card-title>{{ asistencia.titulo }} (Pasada)</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
         <p><strong>Descripción:</strong> {{ asistencia.descripcion }}</p>
         <p><strong>Horario:</strong> {{ asistencia.horaInicio }} - {{ asistencia.horaFin }}</p>
         <p><strong>Fecha:</strong> {{ asistencia.fecha }}</p>
         <p><strong>Lugar:</strong> {{ asistencia.nombreLugar }}</p>
         <p><strong>Dirección:</strong> {{ asistencia.direccion }}</p>
-      </ion-label>
-      <ion-button color="yellow">Ver presentes</ion-button>
-    </ion-item>
+
+
+        <ion-button expand="block" color="primary" (click)="verPresentes(asistencia)">
+          Ver presentes
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
 
   </ion-list>
 
 
 
 
-  <ion-button class="boton" expand="block" (click)="abrirModalAsistencia()">
+
+  <ion-button expand="block" color="primary" (click)="abrirModalAsistencia()">
     Agregar asistencia futura
   </ion-button>
 
-
+  <!--   <ion-button expand="block" color="primary" (click)="verPresentes(asistencia)">
+   Ver presentes
+  </ion-button> -->
 
 
   <!-- Vista del modal para agregar asisitencias -->
-  <ion-modal  [isOpen]="modalAsistenciaAbierto" (didDismiss)="cerrarModalAsistencia()">
+  <ion-modal [isOpen]="modalAsistenciaAbierto" (didDismiss)="cerrarModalAsistencia()">
 
     <ng-template>
 
       <ion-header>
-        <ion-toolbar  class="boton">
+
+        <ion-toolbar>
           <ion-title>Agregar asistencia futura</ion-title>
           <ion-buttons slot="end">
             <ion-button (click)="cerrarModalAsistencia()">
@@ -125,7 +139,7 @@
       </ion-header>
 
 
-      <ion-content class="modal">
+      <ion-content class="ion-padding">
 
         <ion-item>
           <ion-label position="floating">Titulo</ion-label>
@@ -170,7 +184,8 @@
           <ion-input [(ngModel)]="nuevaAsistencia.cantColaboradores" type="number"></ion-input>
         </ion-item>
 
-        <ion-button class="boton" expand="block" (click)="agregarAsistenciaFutura()">Agregar</ion-button>
+
+        <ion-button expand="block" color="success" (click)="agregarAsistenciaFutura()">Agregar</ion-button>
         <div *ngIf="errorMsg" style="color: red; margin-top: 16px; text-align: center;">
           {{ errorMsg }}
         </div>

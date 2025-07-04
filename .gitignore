@@ -23,6 +23,13 @@ log.txt
 /platforms
 /plugins
 
+/android
+/ios
+/node_modules
+/bower_components
+/resources
+
+
 # Compiled output
 /dist
 /tmp

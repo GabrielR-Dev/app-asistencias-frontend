@@ -1,43 +1,47 @@
 import { Injectable } from '@angular/core';
-import { AngularFireAuth } from '@angular/fire/compat/auth';
+
+
+interface Usuario {
+  email: string;
+  password: string;
+  nombre?: string;
+  apellido?: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private afAuth: AngularFireAuth) {}
 
-  login(email: string, password: string) {
-    return this.afAuth.signInWithEmailAndPassword(email, password);
+  private usuariosRegistrados: Usuario[] = [];
+
+  constructor() {}
+
+  login(email: string, password: string): boolean {
+    const usuario = this.usuariosRegistrados.find(u => u.email === email && u.password === password);
+    if (usuario) {
+      localStorage.setItem('usuarioLogueado', JSON.stringify(usuario));
+      return true;
+    }
+    return false;
   }
 
-  logout() {
-    return this.afAuth.signOut();
+  logout(): void {
+    localStorage.removeItem('usuarioLogueado');
   }
 
   isLoggedIn(): boolean {
     return !!localStorage.getItem('usuarioLogueado');
   }
 
-  async register(email: string, password: string, nombre?: string, apellido?: string) {
-    const userCredential = await this.afAuth.createUserWithEmailAndPassword(email, password);
-    // Guarda nombre y apellido en el perfil de Firebase
-    if (userCredential.user && (nombre || apellido)) {
-      await userCredential.user.updateProfile({ displayName: `${nombre || ''} ${apellido || ''}`.trim() });
-    }
-    // Guarda el usuario en localStorage para mantener la sesión
-    const usuarioLogueado = {
-      id: userCredential.user?.uid,
-      email: userCredential.user?.email,
-      nombre: nombre,
-      apellido: apellido,
-    };
-    localStorage.setItem('usuarioLogueado', JSON.stringify(usuarioLogueado));
-    // Guarda el token de Firebase
-    const token = await userCredential.user?.getIdToken();
-    if (token) {
-      localStorage.setItem('tokenFirebase', token);
-    }
-    return userCredential;
+
+  register(email: string, password: string, nombre?: string, apellido?: string): boolean {
+    const existe = this.usuariosRegistrados.some(u => u.email === email);
+    if (existe) return false;
+
+    const nuevoUsuario: Usuario = { email, password, nombre, apellido };
+    this.usuariosRegistrados.push(nuevoUsuario);
+    localStorage.setItem('usuarioLogueado', JSON.stringify(nuevoUsuario));
+    return true;
   }
 }
