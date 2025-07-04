@@ -31,6 +31,18 @@
   text-decoration: none;
 }
 
+ion-fab[vertical="bottom"][horizontal="end"] {
+  position: fixed !important;
+  right: 24px;
+  bottom: 24px;
+  z-index: 1000;
+}
+
+ion-list, ion-header {
+  background-color: #d9d9d9 !important;
+  
+}
+
 //barra de arriba
 .barra_navegadora{
   display: flex;
