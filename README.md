@@ -38,7 +38,9 @@ Despliegue proyecto:
 
   IMPORTAN! El backend y la base de datos esta desplegado en Render (nube). Si se precisa que los mismos tambien esten de manera local debera seguir el proceso del README que se encuentra en el siguiente repositorio: 
   
-    Repositorio Backend: https://github.com/GabrielR-Dev/app-asistencias-backend.git
+  Repositorio Backend:
+  
+    https://github.com/GabrielR-Dev/app-asistencias-backend.git
     
   Ademas debe cambiar el valor de la variable baseUrl de todos los servicios que se encuentran en la carpeta /src/app/services por un valor en local por ejemplo 'http://localhost:8080'
 
