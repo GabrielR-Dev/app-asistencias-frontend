@@ -45,7 +45,7 @@ Despliegue proyecto:
   Ademas debe cambiar el valor de la variable baseUrl de todos los servicios que se encuentran en la carpeta /src/app/services por un valor en local por ejemplo 'http://localhost:8080'
 
     
-Descarga AsApp APK: [LINK](https://drive.google.com/file/d/1pZZsuIG_Qk3AW2p6qiC0k-xHDSmLrK0r/view)
+Descarga AsApp APK: [LINK](https://drive.google.com/drive/folders/1MvWpj9cjhEWZht-hf9NynAzdmd7FqoXO)
 
 
 Colaboradores:
